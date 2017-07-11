@@ -26,7 +26,6 @@ bams = Channel
 process bam2fastq {
 publishDir "$params.output/$name"
 tag "bam: $name"
-module 'SAMtools/1.3.1-foss-2016a'
 
     input:
     set name, file(reads) from bams
@@ -43,7 +42,6 @@ module 'SAMtools/1.3.1-foss-2016a'
 fastqs.into { fastqs_kallisto; fastqs_star }
 
 process kallistoIndex {
-module 'kallisto/0.42.4-linux-x86_64'
 storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
     input:
     file fasta
@@ -58,7 +56,6 @@ storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
 }
 
 process quantKallisto {
-module 'kallisto/0.42.4-linux-x86_64'
 publishDir "$params.output/$name"
 tag "fq: $name"
 
@@ -75,7 +72,6 @@ tag "fq: $name"
     """ 
 }
 process STARindex {
-module 'kallisto/0.42.4-linux-x86_64'
 storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
 
     input:
@@ -92,7 +88,6 @@ storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
 }
 
 process STAR {
-module 'STAR/2.5.2a-foss-2016b'
 publishDir "$params.output/$name"
 tag "star: $name"
 
