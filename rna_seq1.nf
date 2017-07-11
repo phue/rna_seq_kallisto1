@@ -40,16 +40,16 @@ module 'SAMtools/1.3.1-foss-2016a'
 
 process kallistoIndex {
 module 'kallisto/0.42.4-linux-x86_64'
-
+storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
     input:
     file fasta
 
     output:
-    file "transcriptome.index" into transcriptome_index
+    file "tair10_transcripts.idx" into transcriptome_index
 
     script:
     """
-    kallisto index -i transcriptome.index ${fasta} 
+    kallisto index -i tair10_transcripts.idx ${fasta} 
     """
 }
 
