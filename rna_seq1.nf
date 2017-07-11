@@ -1,13 +1,13 @@
 #!/usr/bin/env nextflow
 
-params.in = "../../testfiles/*.bam"
+params.in = "$WORK/testfiles/*.bam"
 params.fragment_len  = '180'
 params.fragment_sd   = '20'
 params.bootstrap     = '10'
 params.output        = "results/"
+params.fasta 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz"
 
-/*fasta = Channel.fromPath( '../testfiles/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz' )*/
-fasta=file('../../testfiles/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz')
+fasta=file(params.fasta)
 
 /*Channel
     .fromFilePairs( params.in, size: -1 )
@@ -22,6 +22,7 @@ bams = Channel
 process bam2fastq {
 publishDir "$params.output/$name"
 tag "bam: $name"
+module 'SAMtools/1.3.1-foss-2016a'
 
     input:
     set name, file(reads) from bams
@@ -38,6 +39,7 @@ tag "bam: $name"
 
 
 process kallistoIndex {
+module 'kallisto/0.42.4-linux-x86_64'
 
     input:
     file fasta
@@ -52,6 +54,7 @@ process kallistoIndex {
 }
 
 process quantKallisto {
+module 'kallisto/0.42.4-linux-x86_64'
 publishDir "$params.output/$name"
 tag "fq: $name"
 
