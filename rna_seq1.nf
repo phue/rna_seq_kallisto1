@@ -3,11 +3,15 @@
 params.in = "$WORK/testfiles/*.bam"
 params.fragment_len  = '180'
 params.fragment_sd   = '20'
-params.bootstrap     = '10'
+params.bootstrap     = '100'
 params.output        = "results/"
 params.fasta 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz"
+params.dna_fasta     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
+params.gtf 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf"
 
 fasta=file(params.fasta)
+fasta_dna=file(params.dna_fasta)
+gtf=file(params.gtf)
 
 /*Channel
     .fromFilePairs( params.in, size: -1 )
@@ -36,7 +40,7 @@ module 'SAMtools/1.3.1-foss-2016a'
     """
      
 }
-
+fastqs.into { fastqs_kallisto; fastqs_star }
 
 process kallistoIndex {
 module 'kallisto/0.42.4-linux-x86_64'
@@ -60,7 +64,7 @@ tag "fq: $name"
 
     input:
     file index from transcriptome_index
-    set name, file(fq) from fastqs
+    set name, file(fq) from fastqs_kallisto
 
     output:
     file "kallisto_${name}" 
@@ -68,14 +72,43 @@ tag "fq: $name"
     script:
     """
  	kallisto quant -i ${index} -o kallisto_${name} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
+    """ 
+}
+process STARindex {
+module 'kallisto/0.42.4-linux-x86_64'
+storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
 
-""" 
+    input:
+    file fasta_dna
+    file gtf
 
+    output: 
+    file 'star' into star_index
 
+    script:
+    """
+    STAR --runThreadN 4 --runMode genomeGenerate --genomeDir star --genomeFastaFiles ${fasta_dna} --sjdbGTFfile ${gtf} 
+    """
 }
 
+process STAR {
+module 'STAR/2.5.2a-foss-2016b'
+publishDir "$params.output/$name"
+tag "star: $name"
 
+    input:
+    file index from star_index
+    set name, file(fq) from fastqs_star
+    
+    output:
+    file "star_${name}"    
 
+    script:
+    """
+    mkdir -p star_${name}
+    STAR --genomeDir $index --readFilesIn $fq --runThreadN 4 --quantMode GeneCounts --outFileNamePrefix ./star_${name}/
+    """
+}
 workflow.onComplete { 
 	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
