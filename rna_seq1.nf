@@ -20,6 +20,7 @@ bams = Channel
 
 
 process bam2fastq {
+publishDir "$params.output/$name"
 tag "bam: $name"
 
     input:
@@ -51,6 +52,7 @@ process kallistoIndex {
 }
 
 process quantKallisto {
+publishDir "$params.output/$name"
 tag "fq: $name"
 
     input:
