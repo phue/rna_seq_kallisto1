@@ -26,7 +26,7 @@ tag "bam: $name"
     set name, file(reads) from bams
 
     output:
-    file("${name}.fastq") into fastqs
+    set name, file("${name}.fastq") into fastqs
 
     script: 
     """ 
@@ -51,18 +51,18 @@ process kallistoIndex {
 }
 
 process quantKallisto {
-
+tag "fq: $name"
 
     input:
     file index from transcriptome_index
-    file fq from fastqs
+    set name, file(fq) from fastqs
 
     output:
-    file "kallisto_${fq.baseName}" 
+    file "kallisto_${name}" 
 
     script:
     """
- 	kallisto quant -i ${index} -o kallisto_${fq.baseName} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
+ 	kallisto quant -i ${index} -o kallisto_${name} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
 
 """ 
 
