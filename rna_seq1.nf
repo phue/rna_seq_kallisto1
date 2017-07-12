@@ -9,11 +9,13 @@ params.fasta 	     = "/lustre/scratch/projects/berger_common/backup_berger_commo
 params.dna_fasta     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
 params.gtf 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf"
 params.design        = "exp.txt"
+params.contrast      = "contrast.txt"
 
 fasta=file(params.fasta)
 fasta_dna=file(params.dna_fasta)
 gtf=file(params.gtf)
 design=file(params.design)
+contrast=file(params.contrast)
 
 /*Channel
     .fromFilePairs( params.in, size: -1 )
@@ -115,11 +117,15 @@ publishDir "$params.output/deseq"
   
   output:
   file 'pairs.pdf'
+  file 'dds.Rdata'
+  file 'pca.pdf'
+  file 'maplots.pdf'
+  file 'contrast_*'
 
-script:
-"""
-$baseDir/bin/deseq2.R kallisto ${design} 
-"""
+  script:
+  """
+  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} 
+  """
 }
 
 workflow.onComplete { 

@@ -29,8 +29,38 @@ run_DESeq=function(dds,dds_noBeta,contrast,cutoff=0.1)
     res_df = (res[order(res$padj<cutoff,abs(res$log2FoldChange),decreasing = T),])
     return(res_df)
 }
+myplotMA=function(dds,contrast){
+  res = results(dds,contrast = contrast)
+  plotMA(res,main=contrast,ylim=c(-2,2))
+}
+add_norm_counts=function(dds,contrast,res){
+  n_counts=counts(dds,normalized=T)
+  g = grep(contrast[1],colnames(colData(dds)))
+  g1 = grep(contrast[2],colData(dds)[,g])
+  g2 = grep(contrast[3],colData(dds)[,g])
+  mean1 = rowMeans(n_counts[,g1])
+  mean2 = rowMeans(n_counts[,g2])
+  numb = cbind(mean1,mean2,n_counts[,g1],n_counts[,g2])
+  colnames(numb)[1:2]=paste0("mean",contrast[2:3])
+  res=as.data.frame(res)
+  new=cbind(res,numb[rownames(res),])
+  new
+}
+clean_up_df=function(res){
+  remove=c("baseMean","lfcSE","stat","pvalue")
+  new = res[,!colnames(res)%in%remove]
+  new
+}
+
+write.resfile=function(res,filename){
+  write.csv(res,file=filename)
+}
+
+
+
 
 #################################################
+### set up 
 
 args <- commandArgs(TRUE)
 sample_id <- dir(args[1])
@@ -52,15 +82,41 @@ counts=txi$counts
 colnames(counts)=s2c$sample
 countsToUse = round(counts)
 
-colD=data.frame(group=s2c$condition)
-dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design~group)
+##################################################
+### deseq2
 
-#dds = DESeq(dds)
+colD=data.frame(group=s2c$condition)
+dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
+save(dds,file="dds.Rdata")
+dds_noBeta=DESeq(dds,betaPrior=FALSE)
+dds=DESeq(dds)
+
+### initial plots
 ntd <- normTransform(dds)
 pdf("pairs.pdf")
 pairs(assay(ntd),pch=".",labels = colData(dds)$group,upper.panel = panel.cor)
 dev.off()
 
+rld <- rlog(dds, blind=FALSE)
+pdf("pca.pdf")
+plotPCA(rld, intgroup=c("group"))
+dev.off()
 
-### PCA plot, pairs, MA
+### analysis + MA plots
+co = read.table(args[3],header=T)
+runs=list()
+pdf("maplots.pdf")
+for ( i in 1:nrow(co)){
+  cont=c("group",colnames(co)[c(which(co[1,]==1),which(co[1,]==-1))])
+  runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=0.1) 
+  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
+  runs[[i]]=clean_up_df(runs[[i]]) 
+  myplotMA(dds,cont)
+  write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
+}
 
+
+
+
+
+### analysis plots
