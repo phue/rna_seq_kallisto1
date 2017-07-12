@@ -8,6 +8,7 @@ params.output        = "results/"
 
 /*fasta = Channel.fromPath( '../testfiles/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz' )*/
 fasta=file('../../testfiles/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz')
+design=file('exp.txt')
 
 /*Channel
     .fromFilePairs( params.in, size: -1 )
@@ -60,7 +61,7 @@ tag "fq: $name"
     set name, file(fq) from fastqs
 
     output:
-    file "kallisto_${name}" 
+    file "kallisto_${name}" into kallisto_dirs 
 
     script:
     """
@@ -71,7 +72,23 @@ tag "fq: $name"
 
 }
 
+process deseq2 {
+publishDir "$params.output/deseq"
 
+  input:
+  file 'kallisto/*' from kallisto_dirs.collect()
+  file design
+  
+  output:
+  file 'pairs.pdf'
+
+script:
+"""
+$baseDir/bin/deseq2.R kallisto ${design} 
+"""
+
+
+}
 
 workflow.onComplete { 
 	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
