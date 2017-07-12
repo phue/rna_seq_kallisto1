@@ -8,10 +8,12 @@ params.output        = "results/"
 params.fasta 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa.gz"
 params.dna_fasta     = "/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
 params.gtf 	     = "/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf"
+params.design        = "exp.txt"
 
 fasta=file(params.fasta)
 fasta_dna=file(params.dna_fasta)
 gtf=file(params.gtf)
+design=file(params.design)
 
 /*Channel
     .fromFilePairs( params.in, size: -1 )
@@ -64,7 +66,7 @@ tag "fq: $name"
     set name, file(fq) from fastqs_kallisto
 
     output:
-    file "kallisto_${name}" 
+    file "kallisto_${name}" into kallisto_dirs 
 
     script:
     """
@@ -104,6 +106,22 @@ tag "star: $name"
     STAR --genomeDir $index --readFilesIn $fq --runThreadN 4 --quantMode GeneCounts --outFileNamePrefix ./star_${name}/
     """
 }
+process deseq2 {
+publishDir "$params.output/deseq"
+
+  input:
+  file 'kallisto/*' from kallisto_dirs.collect()
+  file design
+  
+  output:
+  file 'pairs.pdf'
+
+script:
+"""
+$baseDir/bin/deseq2.R kallisto ${design} 
+"""
+}
+
 workflow.onComplete { 
 	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
