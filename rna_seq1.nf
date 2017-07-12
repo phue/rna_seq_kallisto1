@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.in = "$WORK/testfiles/*.bam"
+params.in = "../bams/*.bam"
 params.fragment_len  = '180'
 params.fragment_sd   = '20'
 params.bootstrap     = '100'
