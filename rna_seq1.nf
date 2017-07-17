@@ -121,6 +121,7 @@ publishDir "$params.output/deseq", mode: 'copy'
   file 'dds.Rdata'
   file 'pca.pdf'
   file 'maplots.pdf'
+  file 'contrast_*'
 
   script:
   """
