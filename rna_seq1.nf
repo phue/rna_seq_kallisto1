@@ -28,7 +28,7 @@ bams = Channel
 
 
 process bam2fastq {
-publishDir "$params.output/$name"
+publishDir "$params.output/$name", mode: 'copy'
 tag "bam: $name"
 
     input:
@@ -60,7 +60,7 @@ storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
 }
 
 process quantKallisto {
-publishDir "$params.output/$name"
+publishDir "$params.output/$name", mode: 'copy'
 tag "fq: $name"
 
     input:
@@ -93,7 +93,7 @@ storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
 
 
 process STAR {
-publishDir "$params.output/$name"
+publishDir "$params.output/$name", mode: 'copy'
 tag "star: $name"
 
     input:
@@ -110,7 +110,7 @@ tag "star: $name"
     """
 }
 process deseq2 {
-publishDir "$params.output/deseq"
+publishDir "$params.output/deseq", mode: 'copy'
 
   input:
   file 'kallisto/*' from kallisto_dirs.collect()
@@ -121,7 +121,6 @@ publishDir "$params.output/deseq"
   file 'dds.Rdata'
   file 'pca.pdf'
   file 'maplots.pdf'
-  file 'contrast_*'
 
   script:
   """
