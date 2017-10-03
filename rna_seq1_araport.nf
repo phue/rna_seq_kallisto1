@@ -11,11 +11,6 @@ params.design        = "exp.txt"
 params.contrast      = "contrast.txt"
 
 
-if(params.organism == "Arabidopsis") {
-	effSize=119146348
-	binSize=10
-}
-
 if(params.anno == "Araport11_genes" || params.anno == "Araport11_genes_and_non_coding"){
 	gtf=file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf")
 	starDir="star_araport" // not affect kallisto
@@ -25,6 +20,7 @@ if(params.anno == "Araport11_genes" || params.anno == "Araport11_genes_and_non_c
 if(params.anno == "Araport11_genes_and_non_coding"){
 	fasta=file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes_and_non_coding.201606.cdna.fasta.gz")
 	kallisto_index="araport11_ganc_transcripts.idx"
+        txdb = file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
 
 if(params.anno == "Araport11_genes"){
@@ -88,7 +84,7 @@ tag "fq: $name"
 
     script:
     """
- 	kallisto quant -i ${index} -o kallisto_${name} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
+    kallisto quant -i ${index} --rf-stranded -o kallisto_${name} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
     """ 
 }
 process STARindex {
@@ -119,28 +115,49 @@ tag "star: $name"
     
     output:
     set name, file("star_${name}/${name}Aligned.sortedByCoord.out.bam") into sort_bam    
+    file("star_${name}/${name}Signal*.wig") into wig_file
+    file "star_${name}/${name}ReadsPerGene.out.tab" 
 
     script:
     """
     mkdir -p star_${name}
-    STAR --genomeDir $index --readFilesIn $fq --runThreadN 4  --outFileNamePrefix ./star_${name}/${name} --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts
+    STAR --genomeDir $index --readFilesIn $fq --runThreadN 4  --outFileNamePrefix ./star_${name}/${name} --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --outWigType wiggle
     """
 }
-/*process bigWig {
-publishDir "$params.output/$name", mode: 'copy'
-tag "bw: $name"
-    
+process index {
+publishDir "$params.output/$name/star_${name}", mode: 'copy'
+tag "index: $name"
+
     input:
-    set name. file(bam) from sort_bam
-    
+    set name, file(bam) from sort_bam
+
     output:
-    file ${name}.coverage.bw   
+    file "${bam}.bai"
 
     script:
     """
-    bamCoverage -b ${bam} -o ${name}.coverage.bw --normalizeTo1x ${effSize} --binSize=${binSize} 
+    samtools index ${bam}
+    """
+}
 
-*/
+sep_wig=wig_file.flatten()
+
+process bigwig {
+publishDir "$params.output/$name/star_${name}", mode: 'copy'
+tag "bigwig: $wig"
+
+   input:
+   file(wig) from sep_wig
+
+   output:
+   file "*.bw"
+
+   script:
+   """
+   $baseDir/bin/wigToBigWig.R ${wig} ${txdb} 
+   """
+}
+
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
