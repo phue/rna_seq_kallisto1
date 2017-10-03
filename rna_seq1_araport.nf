@@ -143,7 +143,7 @@ tag "index: $name"
 sep_wig=wig_file.flatten()
 
 process bigwig {
-publishDir "$params.output/$name/star_${name}", mode: 'copy'
+publishDir "$params.output/bw", mode: 'copy'
 tag "bigwig: $wig"
 
    input:
