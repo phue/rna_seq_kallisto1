@@ -84,7 +84,7 @@ tag "fq: $name"
 
     script:
     """
-    kallisto quant -i ${index} --rf-stranded -o kallisto_${name} --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
+    kallisto quant -i ${index} -o kallisto_${name}  --rf-stranded --single -l ${params.fragment_len} -s ${params.fragment_sd} -b ${params.bootstrap} ${fq}
     """ 
 }
 process STARindex {
@@ -174,7 +174,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
   script:
   """
-  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} 
+  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} ${txdb} 
   """
 }
 

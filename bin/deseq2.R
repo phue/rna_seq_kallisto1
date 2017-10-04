@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
 ##############################################
-
+library(AnnotationDbi)
 library(DESeq2)
 library(readr)
 library(tximport)
-library(TxDb.Athaliana.BioMart.plantsmart28)
+#library(TxDb.Athaliana.BioMart.plantsmart28)
 
 ###############################################
 ## functions
@@ -71,7 +71,8 @@ s2c <- dplyr::mutate(s2c, path = kal_dirs)
 s2c <- dplyr::mutate(s2c, file = paste0(kal_dirs,"/abundance.tsv"))
 s2c <- s2c[order(s2c$condition), ]
 
-txdb = TxDb.Athaliana.BioMart.plantsmart28
+print(args[4])
+txdb = loadDb(args[4]) #TxDb.Athaliana.BioMart.plantsmart28
 keys <- keys(txdb)
 df = select(txdb, keys=keys,columns=c("TXCHROM", "TXSTART", "TXEND","TXNAME","TXSTRAND"), keytype="GENEID")
 tx2gene=df[,2:1]
