@@ -4,7 +4,7 @@
   parameters
 #####################################*/
 
-params.bam 		= "../tmp/*.bam"
+params.bam 		= "../bams/*.bam"
 params.fragment_len  	= '180'
 params.fragment_sd  	= '20'
 params.bootstrap     	= '100'
