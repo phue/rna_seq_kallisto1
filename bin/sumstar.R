@@ -38,7 +38,7 @@ for (i in s2c$path){
 mat = do.call("cbind",counts)
 colnames(mat)=s2c$sample
 torm=grep("N_",rownames(mat))
-countsToUse = mat[-torm,]
+countsToUse = mat  # [-torm,] keep for stats
 colD = data.frame("group"=s2c$condition)
 
 save(countsToUse,colD,file="starData.Rdata")

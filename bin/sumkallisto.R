@@ -15,8 +15,7 @@ design <- args[3]
 if (txtype == "tair10"){
 	library(TxDb.Athaliana.BioMart.plantsmart28)
 	txdb = TxDb.Athaliana.BioMart.plantsmart28
-}
-else{
+} else{
 	library(AnnotationDbi)
 	txdb = loadDb(txtype)
 }

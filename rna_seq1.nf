@@ -12,9 +12,9 @@ params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.csv' // name, type, condition  
-params.anno_set 	= "tair10" // "araport_genes" "araport_genes_non"
+params.anno_set 	= "araport_genes" // "atair10" // "araport_genes" "araport_genes_non"
 params.deseq_type 	= "kallisto" // "star" // "NULL
-  
+params.contrast         = "contrasts.tab"  
 
 /*##################################
   annotation set selection
@@ -69,7 +69,7 @@ tag "sort: $id"
 
         output:
         set id, file("${id}.sort.bam") into bam_sorted
-
+	
         script:
         """
         samtools sort -n $bam -o ${id}.sort.bam
