@@ -11,7 +11,7 @@ params.bootstrap     	= '100'
 params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
-params.info 		= 'info.csv' // name, type, condition  
+params.info 		= 'info.tab' // name, type, condition  
 params.anno_set 	= "araport_genes" // "atair10" // "araport_genes" "araport_genes_non"
 params.deseq_type 	= "kallisto" // "star" // "NULL
 params.contrast         = "contrasts.tab"  
@@ -167,7 +167,7 @@ tag "fq: $name "
 
 process kallistoCountMatrix {
 	tag "anno: ${params.anno_set}"
-	publishDir "$params.output/kallist0_data" , mode: 'copy'	
+	publishDir "$params.output/kallisto_data" , mode: 'copy'	
 
 	input:
 	file 'kallisto/*' from kallisto_dirs.collect()
