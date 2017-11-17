@@ -214,7 +214,7 @@ process STAR {
     
     	output:
 	set name, file("star_${name}/${name}Aligned.sortedByCoord.out.bam") into sort_bam    
-	set name, file("star_${name}/${name}Log.final.out") into final_log    
+	file("star_${name}/${name}Log.final.out") into final_log    
     	file "star_${name}/${name}ReadsPerGene.out.tab" into starcount
 
     	script:
@@ -224,6 +224,21 @@ process STAR {
     	"""
 }
 
+process STAR_log {
+ 	publishDir "$params.output/star_data" , mode: 'copy'
+	input:
+	file 'logs/*' from final_log.collect()
+
+	output:
+	file "star_stats.tab"	
+	file "star_stats.pdf"
+	script:
+	"""
+	bash star_stats.sh
+	$baseDir/bin/plot_star_stats.R
+	"""
+
+}
 // COMBINE STAR COUNTS
 
 process starCountMatrix {
