@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
-/*####################################
-  parameters
-#####################################*/
+/*
+ * Parameters
+ */
 
 params.bam 		= "../bams/*.bam"
 params.fragment_len  	= '180'
@@ -15,10 +15,12 @@ params.info 		= 'info.tab' // name, type, condition
 params.anno_set 	= "araport_genes" // "atair10" // "araport_genes" "araport_genes_non"
 params.deseq_type 	= "kallisto" // "star" // "NULL
 params.contrast         = "contrasts.tab"  
+params.store		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
+//fasta_dna, fasta, gtf, params.normtosize, txdb, 
 
-/*##################################
-  annotation set selection
-####################################*/
+/*
+ *  annotation set selection
+ */
 
 if(params.anno_set == "tair10"){
 	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
@@ -29,6 +31,7 @@ if(params.anno_set == "tair10"){
 	params.normtosize = '119146348'
 	txdb="tair10"
 }
+
 if(params.anno_set == "araport_genes"){
 	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
 	gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf") 
@@ -49,17 +52,57 @@ if(params.anno_set == "araport_genes_non"){
 }
 
 
-/*###################################
-  Analysis start
-####################################*/
+log.info "RNA-SEQ N F  ~  version 0.1"
+log.info "====================================="
+log.info "bam files         	: ${params.bam}"
+log.info "fragment length 	: ${params.fragment_len}"
+log.info "fragment sd		: ${params.fragment_sd}"
+log.info "bootstrap		: ${params.bootstrap}"
+log.info "seq type 		: ${params.seqtype}"
+log.info "strandness		: ${params.strand}"
+log.info "output		: ${params.output}"
+log.info "sample info 		: ${params.info}"
+log.info "annotations		: ${params.anno_set}"
+log.info "DESeq2 data		: ${params.deseq_type}"
+log.info "contrasts		: ${params.contrast}"
+log.info "norm. size		: ${params.normtosize}"
+log.info "txdb 			: ${txdb}"
+log.info "fasta dna		: ${fasta_dna}"
+log.info "fasta			: ${fasta}"
+log.info "\n"
+
+
+/*********************************************
+**********************************************
+ANALYSIS START
+**********************************************
+*********************************************/
+
+/*
+ * Input parameters validation
+ */
 
 design = file(params.info)
+// contrasts = file(params.contrast) 
+
+/*
+ * validate input files
+ */
+
+if( !design.exists() ) exit 1, "Missing sample info file: ${design}"
+// contrasts
+
+/* 
+ * Channel for bam files
+ */
 
 bam_files = Channel
           .fromPath(params.bam)
           .map { file -> [ id:file.baseName,file:file] }
 
-// SORT BAM
+/* 
+ * SORT BAM
+ */
 
 process sortBam {
 tag "sort: $id"
@@ -76,7 +119,9 @@ tag "sort: $id"
         """
 }
 
-// BAM TO FASTQ
+/*
+ * BAM TO FASTQ
+ */
 
 process generateFastq {
 tag "bam : $name, type:$params.seqtype"
@@ -101,11 +146,15 @@ tag "bam : $name, type:$params.seqtype"
         }
 }
 
-// COPY CHANNEL
+/*
+ * COPY CHANNEL
+ */
 
 fastqs.into { fastqs_kallisto; fastqs_star }
 
-// KALLISTO INDEX IF NEEDED
+/*
+ * KALLISTO INDEX IF NEEDED
+ */
 
 process kallistoIndex {
 tag "dir: $kallistoDir"
@@ -123,7 +172,9 @@ storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
     	"""
 }
 
-// KALLIST QUANT
+/*
+ *  KALLIST QUANT
+ */
 
 process quantKallisto {
 tag "fq: $name "
@@ -163,7 +214,9 @@ tag "fq: $name "
 	}
 }
 
-// COMBINE KALLISTO OUTPUT
+/*
+ *  COMBINE KALLISTO OUTPUT
+ */
 
 process kallistoCountMatrix {
 	tag "anno: ${params.anno_set}"
@@ -183,8 +236,10 @@ process kallistoCountMatrix {
 	"""
 }
 
-// STAR INDEX IF NEEDED
-
+/* 
+ * STAR INDEX IF NEEDED
+ */
+	
 process STARindex {
 	tag "dir: $starDir"
 	storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
@@ -203,7 +258,9 @@ process STARindex {
    	 """
 }
 
-// STAR ALIGN
+/*
+ * STAR ALIGN
+ */
 
 process STAR {
 	tag "star: $name"
@@ -237,9 +294,11 @@ process STAR_log {
 	bash star_stats.sh
 	$baseDir/bin/plot_star_stats.R
 	"""
-
 }
-// COMBINE STAR COUNTS
+
+/*
+ * COMBINE STAR COUNTS
+ */ 
 
 process starCountMatrix {
 	tag "strand: ${params.strand}"
@@ -258,7 +317,9 @@ process starCountMatrix {
 	"""
 }
 
-// BAM 2 BW
+/*
+ * BAM 2 BW
+ */
 
 process bam2bw {
 	publishDir "$params.output/$name/bam_bw", mode: 'copy'
@@ -281,7 +342,7 @@ process bam2bw {
 
 
 
-/*
+/**
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
