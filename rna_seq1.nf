@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
-/*
+/**************
  * Parameters
- */
+ **************/
 
 params.bam 		= "../bams/*.bam"
 params.fragment_len  	= '180'
@@ -12,15 +12,16 @@ params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.tab' // name, type, condition  
-params.anno_set 	= "araport_genes" // "atair10" // "araport_genes" "araport_genes_non"
-params.deseq_type 	= "kallisto" // "star" // "NULL
+params.anno_set 	= "araport_genes" // "atair10"  
+params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
-params.store		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
+//params.storage		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
+
 //fasta_dna, fasta, gtf, params.normtosize, txdb, 
 
-/*
+/***************
  *  annotation set selection
- */
+ ***************/
 
 if(params.anno_set == "tair10"){
 	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
@@ -38,15 +39,6 @@ if(params.anno_set == "araport_genes"){
 	fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes.201606.cdna.fasta.gz")
 	starDir = "star_araport"
 	kallistoDir = "araport_genes.idx"
-	params.normtosize = '119146348'
-	txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
-}
-if(params.anno_set == "araport_genes_non"){
-	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-	gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf")
-	fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes_and_non_coding.201606.cdna.fasta.gz")
-	starDir = "star_araport"
-	kallistoDir = "araport_gene_non.idx"
 	params.normtosize = '119146348'
 	txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
