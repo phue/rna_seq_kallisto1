@@ -13,7 +13,7 @@ params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.tab' // name, type, condition  
 params.anno_set 	= "araport_genes" // "atair10"  
-params.deseq_type 	= "kallisto" // "star" // "NULL"
+//params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
 //params.storage		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
 
