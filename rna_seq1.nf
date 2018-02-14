@@ -15,6 +15,7 @@ params.info 		= 'info.tab' // name, type, condition
 params.anno_set 	= "araport_genes" // "atair10"  
 //params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
+params.pvalue		= 0.1
 //params.storage		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
 
 //fasta_dna, fasta, gtf, params.normtosize, txdb, 
@@ -57,6 +58,7 @@ log.info "sample info 		: ${params.info}"
 log.info "annotations		: ${params.anno_set}"
 //log.info "DESeq2 data		: ${params.deseq_type}"
 log.info "contrasts		: ${params.contrast}"
+log.info "p-value 		: ${params.pvalue}"
 log.info "norm. size		: ${params.normtosize}"
 log.info "txdb 			: ${txdb}"
 log.info "fasta dna		: ${fasta_dna}"
@@ -351,7 +353,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
   script:
   """
-  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} 
+  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} ${params.pvalue}
   """
 }
 */
