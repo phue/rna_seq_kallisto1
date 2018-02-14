@@ -16,6 +16,7 @@ params.anno_set 	= "araport_genes" // "atair10"
 //params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
 params.pvalue		= 0.1
+params.binsize		= 10
 //params.storage		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
 
 //fasta_dna, fasta, gtf, params.normtosize, txdb, 
@@ -60,6 +61,7 @@ log.info "annotations		: ${params.anno_set}"
 log.info "contrasts		: ${params.contrast}"
 log.info "p-value 		: ${params.pvalue}"
 log.info "norm. size		: ${params.normtosize}"
+log.info "binsize		: ${params.binsize}"
 log.info "txdb 			: ${txdb}"
 log.info "fasta dna		: ${fasta_dna}"
 log.info "fasta			: ${fasta}"
@@ -330,7 +332,7 @@ process bam2bw {
 	"""
 	export TMPDIR=\$(pwd)
    	samtools index ${bam}
-   	bamCoverage -b ${bam} -o ${name}.bw --normalizeTo1x ${params.normtosize} --binSize=10	
+   	bamCoverage -b ${bam} -o ${name}.bw --normalizeTo1x ${params.normtosize} --binSize=${params.binsize}	
 	"""
 }
 
