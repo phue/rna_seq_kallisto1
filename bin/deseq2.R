@@ -81,6 +81,8 @@ counts=txi$counts
 colnames(counts)=s2c$sample
 countsToUse = round(counts)
 
+pval <- args[4]
+
 ##################################################
 ### deseq2
 
@@ -107,7 +109,7 @@ runs=list()
 pdf("maplots.pdf")
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-  runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=0.1) 
+  runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
   runs[[i]]=clean_up_df(runs[[i]]) 
   myplotMA(dds,cont)
