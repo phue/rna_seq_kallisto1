@@ -79,13 +79,14 @@ ANALYSIS START
  */
 
 design = file(params.info)
-// contrasts = file(params.contrast) 
+contrasts = file(params.contrast) 
 
 /*
  * validate input files
  */
 
 if( !design.exists() ) exit 1, "Missing sample info file: ${design}"
+if( !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
 // contrasts
 
 /* 
@@ -214,21 +215,23 @@ tag "fq: $name "
  *  COMBINE KALLISTO OUTPUT
  */
 
+kallisto_dirs.into{kallisto_dirs; kallisto_dirs_deseq2}
+
 process kallistoCountMatrix {
 	tag "anno: ${params.anno_set}"
-	publishDir "$params.output/kallisto_data" , mode: 'copy'	
+//	publishDir "$params.output/kallisto_data" , mode: 'copy'	
 
 	input:
-	file 'kallisto/*' from kallisto_dirs.collect()
+	file 'kallisto/*' from kallisto_dirs.collect() 
 	
 
 	output:
 	file 'kallisto_counts.tab' 
-	file 'kallistoData.Rdata' into kallistodata 	
+	file 'kallistoData.Rdata' //into kallistodata 	
 
 	script:
 	"""
-	$baseDir/bin/sumkallisto.R kallisto ${txdb} ${design}
+	sumkallisto.R kallisto ${txdb} ${design}
 	"""
 }
 
@@ -288,7 +291,7 @@ process STAR_log {
 	script:
 	"""
 	bash star_stats.sh
-	$baseDir/bin/plot_star_stats.R
+	plot_star_stats.R
 	"""
 }
 
@@ -297,6 +300,7 @@ process STAR_log {
  */ 
 
 process starCountMatrix {
+
 	tag "strand: ${params.strand}"
   	publishDir "$params.output/star_data" , mode: 'copy'
 
@@ -309,7 +313,7 @@ process starCountMatrix {
 	
 	script:
 	"""
-	$baseDir/bin/sumstar.R star ${params.strand} ${design} 
+	sumstar.R star ${params.strand} ${design} 
 	"""
 }
 
@@ -338,13 +342,14 @@ process bam2bw {
 
 
 
-/**
+
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
   input:
-  file 'kallisto/*' from kallisto_dirs.collect()
+  file 'kallisto/*' from kallisto_dirs_deseq2.collect()
   file design
+  file contrasts
   
   output:
   file 'pairs.pdf'
@@ -355,10 +360,10 @@ publishDir "$params.output/deseq", mode: 'copy'
 
   script:
   """
-  $baseDir/bin/deseq2.R kallisto ${design} ${contrast} ${params.pvalue}
+  deseq2.R kallisto ${design} ${contrasts} ${params.pvalue}
   """
 }
-*/
+
 workflow.onComplete { 
 	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
