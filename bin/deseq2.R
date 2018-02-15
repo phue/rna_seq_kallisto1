@@ -66,7 +66,8 @@ sample_id <- dir(args[1])
 kal_dirs <- sapply(sample_id, function(id) file.path(args[1], id))
 
 s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE)
-s2c <- dplyr::select(s2c, sample = run_accession, condition)
+s2c <- dplyr::mutate(s2c, name = paste(condition,sample,sep="_"))
+s2c <- dplyr::select(s2c, sample = run_accession, condition, name)
 s2c <- dplyr::mutate(s2c, path = kal_dirs)
 s2c <- dplyr::mutate(s2c, file = paste0(kal_dirs,"/abundance.tsv"))
 s2c <- s2c[order(s2c$condition), ]
@@ -86,7 +87,7 @@ pval <- args[4]
 ##################################################
 ### deseq2
 
-colD=data.frame(group=s2c$condition)
+colD=data.frame(group=s2c$condition,name=s2c$name)
 dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
 save(dds,file="dds.Rdata")
 dds_noBeta=DESeq(dds,betaPrior=FALSE)
@@ -100,7 +101,7 @@ dev.off()
 
 rld <- rlog(dds, blind=FALSE)
 pdf("pca.pdf")
-plotPCA(rld, intgroup=c("group"))
+plotPCA(rld, intgroup=c("name"))
 dev.off()
 
 ### analysis + MA plots
