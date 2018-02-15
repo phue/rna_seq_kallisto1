@@ -291,7 +291,7 @@ process STAR_log {
 	script:
 	"""
 	bash star_stats.sh
-	plot_star_stats.R
+	plot_star_stats.R ${design}
 	"""
 }
 
