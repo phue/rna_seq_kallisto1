@@ -106,13 +106,14 @@ dev.off()
 ### analysis + MA plots
 co = read.table(args[3],header=T)
 runs=list()
-pdf("maplots.pdf")
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
+  pdf(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"pdf",sep="."))
   runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
   runs[[i]]=clean_up_df(runs[[i]]) 
   myplotMA(dds,cont)
+  dev.off()
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }
 

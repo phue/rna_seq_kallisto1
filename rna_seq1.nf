@@ -355,7 +355,7 @@ publishDir "$params.output/deseq", mode: 'copy'
   file 'pairs.pdf'
   file 'dds.Rdata'
   file 'pca.pdf'
-  file 'maplots.pdf'
+  file 'maplot_*'
   file 'contrast_*'
 
   script:
