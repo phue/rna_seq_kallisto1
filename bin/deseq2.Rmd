@@ -1,0 +1,54 @@
+---
+title: "rna_seq_kallisto1"
+author: "Elin Axelsson-Ekker"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+params:
+  kal_folder: "kallisto"
+  design: "test"
+  p: "0.1"
+---
+
+```{r setup, include=FALSE}
+library(Cairo)
+knitr::opts_chunk$set(dev="CairoPNG")
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+#library(DESeq2)
+library(readr)
+library(tximport)
+#library(TxDb.Athaliana.BioMart.plantsmart28)
+#source("deseq2_functions.R")
+```
+
+```{r arguments, echo=FALSE}
+kal_folder <- params$kal_folder
+print(kal_folder)
+s2c_file <- params$design
+pvalue <- params$p
+#sample_id <- dir(params$kal_folder)
+#kal_dirs <- sapply(sample_id, function(id) file.path(params$kal_folder, id))
+
+s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
+kable(s2c,caption ="samples file used")
+```
+
+P-value threshold is set to `r I(pvalue)`
+
+
+```{r star_stat, message=FALSE}
+star_stat=read.table("star_stats.tab",sep="\t",header=T,stringsAsFactors = F)
+star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
+star_stat = star_stat %>% select (-c(ID,X))
+kable(star_stat)
+s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
+s2c <-select(s2c, sample = run_accession, condition, name)
+star_stat = inner_join(star_stat,s2c)
+star_stat = star_stat %>% select (-c(sample,condition))
+stat_mat = melt(star_stat, id = c("name"))
+ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_wrap(~variable,scales = "free")+ guides(fill=FALSE)+
+  theme(axis.title.x=element_blank(),axis.title.y=element_blank())
+     
+```

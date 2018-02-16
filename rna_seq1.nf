@@ -286,7 +286,7 @@ process STAR_log {
 	file 'logs/*' from final_log.collect()
 
 	output:
-	file "star_stats.tab"	
+	file "star_stats.tab" into stats	
 	file "star_stats.pdf"
 	script:
 	"""
@@ -362,6 +362,23 @@ publishDir "$params.output/deseq", mode: 'copy'
   """
   deseq2.R kallisto ${design} ${contrasts} ${params.pvalue}
   """
+}
+
+process report {
+publishDir "$params.output/deseq", mode: 'copy'
+cache false
+
+        input:
+	file stats from stats
+
+	output:
+ 	file 'deseq2.html'
+
+	script:
+ 	"""
+	cp $baseDir/bin/deseq2.Rmd .
+	R -e 'library("knitr");library("rmarkdown");rmarkdown::render("deseq2.Rmd",params=list(kal_folder="1",design = "${design}",p = "${params.pvalue}"))'
+        """
 }
 
 workflow.onComplete { 
