@@ -45,6 +45,7 @@ if(params.anno_set == "araport_genes"){
 	txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
 
+report = file("report/deseq2.Rmd")
 
 log.info "RNA-SEQ N F  ~  version 0.1"
 log.info "====================================="
@@ -370,14 +371,14 @@ cache false
 
         input:
 	file stats from stats
+	file report	
 
 	output:
- 	file 'deseq2.html'
+ 	file 'report.html'
 
 	script:
  	"""
-	cp $baseDir/bin/deseq2.Rmd .
-	R -e 'library("knitr");library("rmarkdown");rmarkdown::render("deseq2.Rmd",params=list(kal_folder="1",design = "${design}",p = "${params.pvalue}"))'
+	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report}
         """
 }
 

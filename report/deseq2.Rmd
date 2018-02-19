@@ -7,6 +7,7 @@ params:
   kal_folder: "kallisto"
   design: "test"
   p: "0.1"
+  stat: "star_stats.tab"
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +31,7 @@ s2c_file <- params$design
 pvalue <- params$p
 #sample_id <- dir(params$kal_folder)
 #kal_dirs <- sapply(sample_id, function(id) file.path(params$kal_folder, id))
-
+stat <- params$stat
 s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 kable(s2c,caption ="samples file used")
 ```
@@ -39,16 +40,18 @@ P-value threshold is set to `r I(pvalue)`
 
 
 ```{r star_stat, message=FALSE}
-star_stat=read.table("star_stats.tab",sep="\t",header=T,stringsAsFactors = F)
-star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
-star_stat = star_stat %>% select (-c(ID,X))
-kable(star_stat)
-s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
-s2c <-select(s2c, sample = run_accession, condition, name)
-star_stat = inner_join(star_stat,s2c)
-star_stat = star_stat %>% select (-c(sample,condition))
-stat_mat = melt(star_stat, id = c("name"))
-ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_wrap(~variable,scales = "free")+ guides(fill=FALSE)+
-  theme(axis.title.x=element_blank(),axis.title.y=element_blank())
+print(stat)
+print(getwd())
+#star_stat=read.table(stat,sep="\t",header=T,stringsAsFactors = F)
+#star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
+#star_stat = star_stat %>% select (-c(ID,X))
+#kable(star_stat)
+#s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
+#s2c <-select(s2c, sample = run_accession, condition, name)
+#star_stat = inner_join(star_stat,s2c)
+#star_stat = star_stat %>% select (-c(sample,condition))
+#stat_mat = melt(star_stat, id = c("name"))
+#ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_wrap(~variable,scales = "free")+ guides(fill=FALSE)+
+#  theme(axis.title.x=element_blank(),axis.title.y=element_blank())
      
 ```
