@@ -69,6 +69,35 @@ log.info "fasta			: ${fasta}"
 log.info "\n"
 
 
+new File('param.txt').delete()
+def file1 = new File('param.txt')
+
+file1 <<  "RNA-SEQ N F  ~  version 0.1 \n"
+file1 <<  "===================================== \n"
+file1 <<  "bam files             : ${params.bam} \n"
+file1 <<  "fragment length       : ${params.fragment_len} \n"
+//log.info "fragment sd           : ${params.fragment_sd}\n"
+//log.info "bootstrap             : ${params.bootstrap}\n"
+//log.info "seq type              : ${params.seqtype}"
+//log.info "strandness            : ${params.strand}"
+//log.info "output                : ${params.output}"
+//log.info "sample info           : ${params.info}"
+//log.info "annotations           : ${params.anno_set}"
+//log.info "DESeq2 data         : ${params.deseq_type}"
+//log.info "contrasts             : ${params.contrast}"
+//log.info "p-value               : ${params.pvalue}"
+//log.info "norm. size            : ${params.normtosize}"
+//log.info "binsize               : ${params.binsize}"
+//log.info "txdb                  : ${txdb}"
+//log.info "fasta dna             : ${fasta_dna}"
+//log.info "fasta                 : ${fasta}"
+//log.info "\n"
+
+
+
+
+
+
 /*********************************************
 **********************************************
 ANALYSIS START

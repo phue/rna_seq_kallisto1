@@ -40,12 +40,10 @@ P-value threshold is set to `r I(pvalue)`
 
 
 ```{r star_stat, message=FALSE}
-print(stat)
-print(getwd())
 star_stat=read.table(stat,sep="\t",header=T,stringsAsFactors = F)
 star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
 star_stat = star_stat %>% select (-c(ID,X))
-kable(star_stat)
+kable(star_stat, caption="Alignment stats (STAR)")
 s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
 s2c <-select(s2c, sample = run_accession, condition, name)
 star_stat = inner_join(star_stat,s2c)
