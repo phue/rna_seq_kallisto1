@@ -405,7 +405,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 	script:
  	"""
-	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report}
+	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${file1}
         """
 }
 

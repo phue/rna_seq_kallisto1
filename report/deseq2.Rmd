@@ -8,6 +8,7 @@ params:
   design: "test"
   p: "0.1"
   stat: "star_stats.tab"
+  para: "param.txt"
 ---
 
 ```{r setup, include=FALSE}
@@ -23,6 +24,12 @@ library(tximport)
 #library(TxDb.Athaliana.BioMart.plantsmart28)
 #source("deseq2_functions.R")
 ```
+
+```{r inparameters}
+para = read.table(params$para,sep="\\")
+kable(para)
+```
+
 
 ```{r arguments, echo=FALSE}
 kal_folder <- params$kal_folder
