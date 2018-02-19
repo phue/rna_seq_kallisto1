@@ -367,7 +367,6 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 process report {
 publishDir "$params.output/deseq", mode: 'copy'
-cache false
 
         input:
 	file stats from stats
