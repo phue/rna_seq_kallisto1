@@ -381,11 +381,11 @@ publishDir "$params.output/deseq", mode: 'copy'
   file contrasts
   
   output:
-  file 'pairs.pdf'
-  file 'dds.Rdata'
-  file 'pca.pdf'
-  file 'maplot_*'
-  file 'contrast_*'
+  file 'pairs.pdf' into pair
+  file 'dds.Rdata' into dds
+  file 'pca.pdf' into pca
+  file 'maplot_*' into maplots
+  file 'contrast_*' into results
 
   script:
   """
@@ -399,12 +399,17 @@ publishDir "$params.output/deseq", mode: 'copy'
         input:
 	file stats from stats
 	file report	
+	file pairplot from pair
+	file pcaplot from pca
+
 
 	output:
  	file 'deseq2.html'
 
 	script:
  	"""
+	mkdir figs
+	cp -L  ${pairplot} figs/ 
 	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD
         """
 }

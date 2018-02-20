@@ -48,9 +48,11 @@ s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 kable(s2c,caption ="samples file used")
 ```
 
-## DESeq2 
+## DESeq2 Results
 
 P-value threshold is set to `r I(pvalue)`
+
+<img src="figs/pairs.pdf" alt="some text"  width="4200" height="4200">
 
 ## Alignment stats
 
