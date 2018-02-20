@@ -94,7 +94,7 @@ file1 <<  "fasta                 : ${fasta} \n"
 
 
 
-
+mypar = file('param.txt')
 
 
 /*********************************************
@@ -401,11 +401,11 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file report	
 
 	output:
- 	file 'report.html'
+ 	file 'deseq2.html'
 
 	script:
  	"""
-	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${file1}
+	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD
         """
 }
 

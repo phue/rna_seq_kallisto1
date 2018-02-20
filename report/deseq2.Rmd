@@ -25,11 +25,16 @@ library(tximport)
 #source("deseq2_functions.R")
 ```
 
+# {.tabset}
+
+## Used parameters
+
 ```{r inparameters}
 para = read.table(params$para,sep="\\")
 kable(para)
 ```
 
+## Sample info
 
 ```{r arguments, echo=FALSE}
 kal_folder <- params$kal_folder
@@ -43,8 +48,11 @@ s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 kable(s2c,caption ="samples file used")
 ```
 
+## DESeq2 
+
 P-value threshold is set to `r I(pvalue)`
 
+## Alignment stats
 
 ```{r star_stat, message=FALSE}
 star_stat=read.table(stat,sep="\t",header=T,stringsAsFactors = F)
