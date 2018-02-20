@@ -27,6 +27,9 @@ library(tximport)
 
 # {.tabset}
 
+## Summery 
+
+
 ## Used parameters
 
 ```{r inparameters}
@@ -50,9 +53,24 @@ kable(s2c,caption ="samples file used")
 
 ## DESeq2 Results
 
+Differential expression analysis was carried out on the counts from Kallisto (ref) using DESeq2 (ref). The samples are described under tab "Sample info". 
+
+
+<img src="pairs.png" alt="pairs plot">
+
+Paired plot of all samples. Each dot is one gene, the x and y axes are the two samples, e.g. the plot .... The upper part of the plot shows the spearman correlation between the corresponding samples.
+
+
 P-value threshold is set to `r I(pvalue)`
 
-<img src="figs/pairs.pdf" alt="some text"  width="4200" height="4200">
+<img src="pca.png" alt="pca plot">
+
+PCA plot of all samples.
+
+```{r dir}
+print(dir("maplots"))
+```
+
 
 ## Alignment stats
 

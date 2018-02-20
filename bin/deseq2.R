@@ -6,6 +6,7 @@ library(DESeq2)
 library(readr)
 library(tximport)
 library(TxDb.Athaliana.BioMart.plantsmart28)
+library(Cairo)
 
 ###############################################
 ## functions
@@ -95,12 +96,12 @@ dds=DESeq(dds)
 
 ### initial plots
 ntd <- normTransform(dds)
-pdf("pairs.pdf")
+CairoPNG("pairs.png")
 pairs(assay(ntd),pch=".",labels = colData(dds)$group,upper.panel = panel.cor)
 dev.off()
 
 rld <- rlog(dds, blind=FALSE)
-pdf("pca.pdf")
+CairoPNG("pca.png")
 plotPCA(rld, intgroup=c("name"))
 dev.off()
 
@@ -109,7 +110,7 @@ co = read.table(args[3],header=T)
 runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-  pdf(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"pdf",sep="."))
+  CairoPNG(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
   runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
   runs[[i]]=clean_up_df(runs[[i]]) 

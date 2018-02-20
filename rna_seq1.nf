@@ -381,9 +381,9 @@ publishDir "$params.output/deseq", mode: 'copy'
   file contrasts
   
   output:
-  file 'pairs.pdf' into pair
+  file 'pairs.png' into pair
   file 'dds.Rdata' into dds
-  file 'pca.pdf' into pca
+  file 'pca.png' into pca
   file 'maplot_*' into maplots
   file 'contrast_*' into results
 
@@ -401,6 +401,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file report	
 	file pairplot from pair
 	file pcaplot from pca
+	file 'maplots/*' from maplots.collect()
 
 
 	output:
@@ -408,8 +409,6 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 	script:
  	"""
-	mkdir figs
-	cp -L  ${pairplot} figs/ 
 	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD
         """
 }
