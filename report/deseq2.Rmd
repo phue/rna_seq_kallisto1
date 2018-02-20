@@ -9,6 +9,7 @@ params:
   p: "0.1"
   stat: "star_stats.tab"
   para: "param.txt"
+  contrast_file: "contrast.tab"
 ---
 
 ```{r setup, include=FALSE}
@@ -40,6 +41,7 @@ kable(para)
 ## Sample info
 
 ```{r arguments, echo=FALSE}
+contrast_file = params$contrast_file
 kal_folder <- params$kal_folder
 print(kal_folder)
 s2c_file <- params$design
@@ -67,11 +69,25 @@ P-value threshold is set to `r I(pvalue)`
 
 PCA plot of all samples.
 
+
 ```{r dir}
+con = read.table(contrast_file)
+print(con)
+wd = getwd()
+print(getwd())
 print(dir("maplots"))
 ```
-
-
+tetst 
+```{r, echo=FALSE,include=FALSE}
+out = NULL
+for ( i in dir("maplots")){
+out = c(out,knit_child(paste(wd,'Child.Rmd',sep="/")))
+}
+```
+test
+```{r}
+cat(out)
+```
 ## Alignment stats
 
 ```{r star_stat, message=FALSE}

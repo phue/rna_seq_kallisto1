@@ -401,15 +401,15 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file report	
 	file pairplot from pair
 	file pcaplot from pca
-	file 'maplots/*' from maplots.collect()
-
+	file 'lists/*' from results.collect()
+	file 'maplots/*' from maplots.collect() 
 
 	output:
  	file 'deseq2.html'
 
 	script:
  	"""
-	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD
+	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD ${contrasts} $baseDir/bin/ddeseq_contrast.Rmd
         """
 }
 

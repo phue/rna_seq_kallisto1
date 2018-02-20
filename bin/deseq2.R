@@ -21,6 +21,7 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
     if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex.cor * r)
 }
+
 run_DESeq=function(dds,dds_noBeta,contrast,cutoff=0.1)
 {
     res2 = results(dds_noBeta,contrast = contrast)
@@ -59,6 +60,7 @@ write.resfile=function(res,filename){
 }
 
 
+
 #################################################
 ### set up 
 
@@ -83,16 +85,18 @@ counts=txi$counts
 colnames(counts)=s2c$sample
 countsToUse = round(counts)
 
+
 pval <- args[4]
 
 ##################################################
-### deseq2
+### deseq2 - first part 
 
 colD=data.frame(group=s2c$condition,name=s2c$name)
 dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
-save(dds,file="dds.Rdata")
 dds_noBeta=DESeq(dds,betaPrior=FALSE)
 dds=DESeq(dds)
+save(dds,dds_noBeta,file="dds.Rdata")
+
 
 ### initial plots
 ntd <- normTransform(dds)
@@ -104,6 +108,7 @@ rld <- rlog(dds, blind=FALSE)
 CairoPNG("pca.png")
 plotPCA(rld, intgroup=c("name"))
 dev.off()
+
 
 ### analysis + MA plots
 co = read.table(args[3],header=T)
@@ -118,8 +123,6 @@ for ( i in 1:nrow(co)){
   dev.off()
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }
-
-
 
 
 
