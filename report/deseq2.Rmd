@@ -1,6 +1,5 @@
 ---
-title: "rna_seq_kallisto1"
-author: "Elin Axelsson-Ekker"
+title: "Results from rna_seq_kallisto1 pipeline"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 params:
@@ -30,15 +29,17 @@ library(tximport)
 
 ## Summery 
 
+See also report.html 
+
 
 ## Used parameters
 
 ```{r inparameters}
-para = read.table(params$para,sep="\\")
-kable(para)
+para = read.table(params$para,sep="\\",header=TRUE)
+kable(para,caption="paramters used")
 ```
 
-## Sample info
+## Sample info {#s_info}
 
 ```{r arguments, echo=FALSE}
 contrast_file = params$contrast_file
@@ -55,9 +56,14 @@ kable(s2c,caption ="samples file used")
 
 ## DESeq2 Results
 
-Differential expression analysis was carried out on the counts from Kallisto (ref) using DESeq2 (ref). The samples are described under tab "Sample info". 
+### Description of analysis 
+Differential expression analysis was carried out on the counts from [Kallisto](https://pachterlab.github.io/kallisto/about) using [DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html). For the import of the transcript level data and summerazation into gene level data the R package [tximport](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html). 
+**For information about versions used please refer to the ...**
+
+A tab file with the resulting counts can be found here.. The samples are described under tab Sample info. 
 
 
+### Pairs plot
 <img src="pairs.png" alt="pairs plot">
 
 Paired plot of all samples. Each dot is one gene, the x and y axes are the two samples, e.g. the plot .... The upper part of the plot shows the spearman correlation between the corresponding samples.
@@ -65,29 +71,29 @@ Paired plot of all samples. Each dot is one gene, the x and y axes are the two s
 
 P-value threshold is set to `r I(pvalue)`
 
+### PCA plot
 <img src="pca.png" alt="pca plot">
 
 PCA plot of all samples.
 
 
-```{r dir}
-con = read.table(contrast_file)
-print(con)
-wd = getwd()
-print(getwd())
-print(dir("maplots"))
-```
-tetst 
+### Pair-wise DE analysis 
+
 ```{r, echo=FALSE,include=FALSE}
 out = NULL
 for ( i in dir("maplots")){
-out = c(out,knit_child(paste(wd,'Child.Rmd',sep="/")))
+out = c(out, knit_child("ddeseq_contrast.Rmd"))
 }
 ```
-test
-```{r}
+
+
+```{r,echo = FALSE, results='asis'}
 cat(out)
 ```
+
+Read more [here](./lists/contrast_group_ko_wt.csv) # It works!
+
+
 ## Alignment stats
 
 ```{r star_stat, message=FALSE}

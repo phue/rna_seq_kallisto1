@@ -95,7 +95,7 @@ file1 <<  "fasta                 : ${fasta} \n"
 
 
 mypar = file('param.txt')
-
+mod = file('nextflow.config')
 
 /*********************************************
 **********************************************
@@ -125,6 +125,20 @@ if( !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
 bam_files = Channel
           .fromPath(params.bam)
           .map { file -> [ id:file.baseName,file:file] }
+
+
+process track {
+	input:
+	file mod
+	
+	output:
+	file "modules.txt"
+
+	script:
+	"""
+	grep "module" ${mod} | tr -d ' ' | tr -d \"\t" | sed 's/module=//g' |   tr -d \\'  | awk 'BEGIN{RS=":"} {print}' | sort | uniq > modules.txt
+	"""
+}
 
 /* 
  * SORT BAM
@@ -398,7 +412,6 @@ publishDir "$params.output/deseq", mode: 'copy'
 
         input:
 	file stats from stats
-	file report	
 	file pairplot from pair
 	file pcaplot from pca
 	file 'lists/*' from results.collect()
@@ -409,9 +422,13 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 	script:
  	"""
-	createReport.R 1 ${design} ${params.pvalue} ${stats} ${report} ${mypar} \$PWD ${contrasts} $baseDir/bin/ddeseq_contrast.Rmd
+        cp -L $baseDir/bin/ddeseq_contrast.Rmd . 
+	cp -L $baseDir/report/deseq2.Rmd . 
+	createReport.R 1 ${design} ${params.pvalue} ${stats} ${mypar} ${contrasts}
         """
 }
+
+
 
 workflow.onComplete { 
 	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
