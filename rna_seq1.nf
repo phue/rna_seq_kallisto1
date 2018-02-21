@@ -425,7 +425,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 	script:
  	"""
-        cp -L $baseDir/bin/ddeseq_contrast.Rmd . 
+        cp -L $baseDir/report/ddeseq_contrast.Rmd . 
 	cp -L $baseDir/report/deseq2.Rmd . 
 	createReport.R 1 ${design} ${params.pvalue} ${stats} ${mypar} ${contrasts}
         """
