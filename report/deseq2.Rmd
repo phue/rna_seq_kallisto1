@@ -34,10 +34,17 @@ See also report.html
 
 ## Used parameters
 
-```{r inparameters}
-para = read.table(params$para,sep="\\",header=TRUE)
-kable(para,caption="paramters used")
+
+### SessionInfo from DEseq2 R session
+```{r engine='bash', comment=''}
+cat "sessionInfo_deseq2.txt"
 ```
+
+### Nextflow parameters
+```{r engine='bash', comment=''}
+cat "param.txt"
+```
+
 
 ## Sample info {#s_info}
 
