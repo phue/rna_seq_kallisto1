@@ -132,7 +132,7 @@ process track {
 	file mod
 	
 	output:
-	file "modules.txt"
+	file "modules.txt" into modules
 
 	script:
 	"""
@@ -412,6 +412,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
         input:
 	file stats from stats
+	file mods from modules
 	file pairplot from pair
 	file pcaplot from pca
 	file 'lists/*' from results.collect()
