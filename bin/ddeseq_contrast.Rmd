@@ -1,0 +1,16 @@
+---
+title: "contrast"
+output: html_document
+---
+
+
+
+```{r,echo=FALSE, results='asis'}
+name = sub(".png","",strsplit(i, "group_")[[1]][2])
+cat("\n###",name,"\n")
+cat("\n")
+cat("<img src=\"",paste("maplots",i,sep="/"),"\" alt=\"maplot plot\">","\n",sep="")
+
+```
+
+
