@@ -400,6 +400,7 @@ publishDir "$params.output/deseq", mode: 'copy'
   file 'pca.png' into pca
   file 'maplot_*' into maplots
   file 'contrast_*' into results
+  file 'sessionInfo_deseq2.txt' into seinfo
 
   script:
   """
@@ -417,6 +418,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file pcaplot from pca
 	file 'lists/*' from results.collect()
 	file 'maplots/*' from maplots.collect() 
+	file session from seinfo 	
 
 	output:
  	file 'deseq2.html'

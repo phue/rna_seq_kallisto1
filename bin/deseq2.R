@@ -124,5 +124,5 @@ for ( i in 1:nrow(co)){
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }
 
-
+writeLines(capture.output(sessionInfo()), "sessionInfo_deseq2.txt")
 
