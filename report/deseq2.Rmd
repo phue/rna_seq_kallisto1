@@ -33,15 +33,20 @@ See also report.html
 
 ## Used parameters
 
-
-### SessionInfo from DEseq2 R session
+### Software and versions
 ```{r engine='bash', comment=''}
-cat "sessionInfo_deseq2.txt"
+cat "modules.txt"
 ```
+
 
 ### Nextflow parameters
 ```{r engine='bash', comment=''}
 cat "param.txt"
+```
+
+### SessionInfo from DEseq2 R session
+```{r engine='bash', comment=''}
+cat "sessionInfo_deseq2.txt"
 ```
 
 
