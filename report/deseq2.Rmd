@@ -17,21 +17,112 @@ knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
 library(ggplot2)
 library(reshape2)
-#library(DESeq2)
 library(readr)
 library(tximport)
-#library(TxDb.Athaliana.BioMart.plantsmart28)
-#source("deseq2_functions.R")
+contrast_file = params$contrast_file ## maybe remove as parameter
+s2c_file <- params$design
+s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 ```
 
 # {.tabset}
 
 ## Summery 
 
+This is the html report with the results from the nextflow pipeline rna_seq_kallisto1. The report contains figures and links to results. It also contains information about the run, such as the samples used, the parameters given to the pipeline, the softwares (incl version) used etc. This is important information and critical for being able to reproduce the results. It also information needed for writing the methods section should you happen to want to publish your results. Therefor, it is strongly recommended to keep the folders and files (.../) as they are and if doing any postprocessing of e.g. the genelists, to clearly document where the original file came from.   
+
 See also report.html 
 
+## DESeq2 Results
 
-## Used parameters
+```{r p-value, echo= FALSE}
+pvalue <- params$p
+```
+
+
+### Description of analysis
+Differential expression analysis was carried out on the counts from [Kallisto](https://pachterlab.github.io/kallisto/about) using [DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html). For the import of the transcript level data and summarization into gene level data the R package [tximport](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html). A tab file with the resulting counts can be found here.
+
+**For information about versions used please refer to the tab "Used parameters, softwares and packages".**  The samples are described under tab "Sample info".
+
+### Scatterplot matrix
+<img src="pairs.png" alt="pairs plot">
+
+*Matrix plot of all against all samples:* Each dot is one gene, the x and y axes are the two samples. That is the plot in row *i*, column *j* ( [*i,j*] ) is the scatter plot of the sample in [*i,i*] and the sample in [*j,j*].  E.g. the plot in [2,1] has the sample from [1,1] on the x-asis and the sampl3 from [2,2] on the y-asis. The upper part of the matrix shows the spearman correlation between the corresponding samples.
+
+
+
+### PCA plot
+<img src="pca.png" alt="pca plot">
+
+*PCA plot of all samples*: The plot shows the two largerst PC, samples that are close to each other are more similar than samples further apart. Ideally one would like to see replicates clustering closely together and different conditions being clearly separeted.
+
+
+### Pair-wise DE analysis
+
+For each contrast defined in the contrast file, a pair-wise differential expression test is being caried out. For dispersion estimates all samples provided to the pipeline are used.
+
+```{r, echo=FALSE,include=FALSE}
+out = NULL
+for ( i in dir("maplots")){
+out = c(out, knit_expand("ddeseq_contrast.Rmd"))
+}
+```
+
+
+```{r,echo = FALSE, results='asis'}
+cat(out)
+```
+
+Read more [here](./lists/contrast_group_ko_wt.csv) # It works!
+Read more [here](./lists/contrast_group_ko_wt.csv)
+
+
+P-value threshold is set to `r I(pvalue)`
+
+## Alignment and aligment stats
+
+
+The DE analysis is carried out using the kallisto output, that using the idea of pseudoalignment and not any "normal" alignment. However, an alignment is useful for e.g. genome browser visualisation and also as a quality matrix, hence in parallel to the DE analysis a [STAR](https://academic.oup.com/bioinformatics/article/29/1/15/272537) alignment was carried out.
+
+The bigwig file (bw) for each sample is available here (useful for genome browsing), the bam files are here.
+
+### Alignment stats
+
+Below is alignment statistics as given from the STAR software. Espacially the procentage of uniquely mapped reads and the average mapped length may be of interest. For RNA-seq we expect a high number of uniquly mapped reads. We also like to see that the proportion of uniquely mapped reads is approximately the same in all samples. Ideally the average mapped length should also be similar in all samples.
+
+```{r star_stat, message=FALSE}
+stat <- params$stat
+star_stat=read.table(stat,sep="\t",header=T,stringsAsFactors = F)
+star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
+star_stat = star_stat %>% select (-c(ID,X))
+kable(star_stat, caption="Alignment stats (STAR)")
+s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
+s2c <-select(s2c, sample = run_accession, condition, name)
+star_stat = inner_join(star_stat,s2c)
+star_stat = star_stat %>% select (-c(sample,condition))
+stat_mat = melt(star_stat, id = c("name"))
+```
+
+The data in the table can also be visualized by barplots:
+
+```{r barplot}
+ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_wrap(~variable,scales = "free")+ guides(fill=FALSE)+
+  theme(axis.title.x=element_blank(),axis.title.y=element_blank())
+
+```
+
+
+
+## Sample info {#s_info}
+
+```{r arguments, echo=FALSE}
+s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
+kable(s2c,caption ="samples file used")
+```
+
+
+
+## Used parameters, softwares and packages
 
 ### Software and versions
 ```{r engine='bash', comment=''}
@@ -50,74 +141,5 @@ cat "sessionInfo_deseq2.txt"
 ```
 
 
-## Sample info {#s_info}
-
-```{r arguments, echo=FALSE}
-contrast_file = params$contrast_file
-kal_folder <- params$kal_folder
-print(kal_folder)
-s2c_file <- params$design
-pvalue <- params$p
-#sample_id <- dir(params$kal_folder)
-#kal_dirs <- sapply(sample_id, function(id) file.path(params$kal_folder, id))
-stat <- params$stat
-s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
-kable(s2c,caption ="samples file used")
-```
-
-## DESeq2 Results
-
-### Description of analysis 
-Differential expression analysis was carried out on the counts from [Kallisto](https://pachterlab.github.io/kallisto/about) using [DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html). For the import of the transcript level data and summerazation into gene level data the R package [tximport](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html). 
-**For information about versions used please refer to the ...**
-
-A tab file with the resulting counts can be found here.. The samples are described under tab Sample info. 
 
 
-### Pairs plot
-<img src="pairs.png" alt="pairs plot">
-
-Paired plot of all samples. Each dot is one gene, the x and y axes are the two samples, e.g. the plot .... The upper part of the plot shows the spearman correlation between the corresponding samples.
-
-
-P-value threshold is set to `r I(pvalue)`
-
-### PCA plot
-<img src="pca.png" alt="pca plot">
-
-PCA plot of all samples.
-
-
-### Pair-wise DE analysis 
-
-```{r, echo=FALSE,include=FALSE}
-out = NULL
-for ( i in dir("maplots")){
-out = c(out, knit_child("ddeseq_contrast.Rmd"))
-}
-```
-
-
-```{r,echo = FALSE, results='asis'}
-cat(out)
-```
-
-Read more [here](./lists/contrast_group_ko_wt.csv) # It works!
-
-
-## Alignment stats
-
-```{r star_stat, message=FALSE}
-star_stat=read.table(stat,sep="\t",header=T,stringsAsFactors = F)
-star_stat = mutate(star_stat,sample=sapply(strsplit(ID,"Log"),"[[",1) )
-star_stat = star_stat %>% select (-c(ID,X))
-kable(star_stat, caption="Alignment stats (STAR)")
-s2c <- mutate(s2c, name = paste(condition,sample,sep="_"))
-s2c <-select(s2c, sample = run_accession, condition, name)
-star_stat = inner_join(star_stat,s2c)
-star_stat = star_stat %>% select (-c(sample,condition))
-stat_mat = melt(star_stat, id = c("name"))
-ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_wrap(~variable,scales = "free")+ guides(fill=FALSE)+
-  theme(axis.title.x=element_blank(),axis.title.y=element_blank())
-     
-```

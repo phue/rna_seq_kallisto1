@@ -7,10 +7,17 @@ output: html_document
 
 ```{r,echo=FALSE, results='asis'}
 name = sub(".png","",strsplit(i, "group_")[[1]][2])
-cat("\n###",name,"\n")
+part = strsplit(name,"_")
+cat("\n###",part[[1]][1]," vs ",part[[1]][2],"\n")
 cat("\n")
 cat("<img src=\"",paste("maplots",i,sep="/"),"\" alt=\"maplot plot\">","\n",sep="")
-
+cat("\n")
+csv=paste(paste0("contrast_group_",name),".csv",sep="")
+cat("Download full [gene list](./lists/",csv,")",sep="")
+cat("\n")
+a = read.csv(paste0("./lists/",csv))
+#print(head(a))
 ```
+
 
 
