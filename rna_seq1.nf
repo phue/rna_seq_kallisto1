@@ -58,7 +58,6 @@ log.info "strandness		: ${params.strand}"
 log.info "output		: ${params.output}"
 log.info "sample info 		: ${params.info}"
 log.info "annotations		: ${params.anno_set}"
-//log.info "DESeq2 data		: ${params.deseq_type}"
 log.info "contrasts		: ${params.contrast}"
 log.info "p-value 		: ${params.pvalue}"
 log.info "norm. size		: ${params.normtosize}"
@@ -83,7 +82,6 @@ file1 <<  "strandness            : ${params.strand} \n"
 file1 <<  "output                : ${params.output} \n"
 file1 <<  "sample info           : ${params.info} \n"
 file1 <<  "annotations           : ${params.anno_set} \n"
-file1 <<  "DESeq2 data         : ${params.deseq_type} \n"
 file1 <<  "contrasts             : ${params.contrast} \n"
 file1 <<  "p-value               : ${params.pvalue} \n"
 file1 <<  "norm. size            : ${params.normtosize} \n"
@@ -419,6 +417,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file 'lists/*' from results.collect()
 	file 'maplots/*' from maplots.collect() 
 	file session from seinfo 	
+	file mypar
 
 	output:
  	file 'deseq2.html'
@@ -427,7 +426,7 @@ publishDir "$params.output/deseq", mode: 'copy'
  	"""
         cp -L $baseDir/report/ddeseq_contrast.Rmd . 
 	cp -L $baseDir/report/deseq2.Rmd . 
-	createReport.R 1 ${design} ${params.pvalue} ${stats} ${mypar} ${contrasts}
+	createReport.R 1 ${design} ${params.pvalue} ${stats}  ${contrasts}
         """
 }
 

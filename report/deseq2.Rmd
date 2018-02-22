@@ -7,7 +7,6 @@ params:
   design: "test"
   p: "0.1"
   stat: "star_stats.tab"
-  para: "param.txt"
   contrast_file: "contrast.tab"
 ---
 
