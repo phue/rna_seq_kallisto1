@@ -28,6 +28,7 @@ run_DESeq=function(dds,dds_noBeta,contrast,cutoff)
     res = results(dds,contrast = contrast)
     res$padj[is.na(res$padj)]=1
     res$log2_mle = res2$log2FoldChange
+    res = as.data.frame(res)
     res_df = (res[order(res$padj<cutoff,abs(res$log2FoldChange),decreasing = T),])
     return(res_df)
 }
@@ -95,7 +96,8 @@ colnames(counts)=s2c$sample
 countsToUse = round(counts)
 
 
-pval <- args[4]
+pval <- as.numeric(args[4])
+
 
 ##################################################
 ### deseq2 - first part 
@@ -124,14 +126,14 @@ co = read.table(args[3],header=T)
 runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-  runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
-  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
-  runs[[i]]=clean_up_df(runs[[i]]) 
+runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
+ runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
+runs[[i]]=clean_up_df(runs[[i]])
   CairoPNG(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)
   dev.off()
   CairoPNG(paste(paste("barplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
-  mybarplot(runs[[i]],p=0.1)
+  mybarplot(runs[[i]],p=pval)
   dev.off()  
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }

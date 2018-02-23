@@ -14,8 +14,10 @@ Each dot is one gene. On the x-axis we have the mean normalized counts across al
 ```{r,echo = FALSE, results='asis'}
 j = sub("maplot","barplot",i)
 cat("<img src=\"",paste("barplots",j,sep="/"),"\" alt=\"barplot plot\">","\n",sep="")
+cat("\n")
+cat("*Barplot of significant genes in ", part[[1]][1]," vs ",part[[1]][2],":*")
 ``` 
-
+The proportions of up (yellow colored) and  
 
 
 ```{r, include=FALSE}
