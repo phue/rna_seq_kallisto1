@@ -32,6 +32,15 @@ run_DESeq=function(dds,dds_noBeta,contrast,cutoff)
     return(res_df)
 }
 
+mybarplot = function(run, p){
+    sigs = dplyr::filter(as.data.frame(run),padj<p)
+    counts = dplyr::transmute(sigs, log_0 = sign(log2FoldChange) ,log_1=ifelse(abs(log2FoldChange)>1,1,0)*sign(log2FoldChange) , log_2= ifelse(abs(log2FoldChange)>2,1,0)*sign(log2FoldChange))
+    stats = cbind(apply(counts,2,function(x) y = sum(x==1)), apply(counts,2,function(x) y = sum(x==0)), apply(counts,2,function(x) y = sum(x==-1))
+   colnames(stats)=c("up","none","down")
+   barplot(t(stats[,-2]),col=c("yellow","blue"),names.arg=c("abs(log2)>0","abs(log2)>1","abs(log2)>2" ),ylab="number significant genes")
+}
+
+
 myplotMA=function(dds,contrast,p){
   res = results(dds,contrast = contrast)
   plotMA(res,main=contrast,ylim=c(-2,2),alpha=p)
@@ -115,12 +124,15 @@ co = read.table(args[3],header=T)
 runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-  CairoPNG(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
   runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
   runs[[i]]=clean_up_df(runs[[i]]) 
+  CairoPNG(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)
   dev.off()
+  CairoPNG(paste(paste("barplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
+  mybarplot(runs[[i]],p=0.1)
+  dev.off()  
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }
 
