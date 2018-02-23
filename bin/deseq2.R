@@ -22,7 +22,7 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
     text(0.5, 0.5, txt, cex = cex.cor * r)
 }
 
-run_DESeq=function(dds,dds_noBeta,contrast,cutoff=0.1)
+run_DESeq=function(dds,dds_noBeta,contrast,cutoff)
 {
     res2 = results(dds_noBeta,contrast = contrast)
     res = results(dds,contrast = contrast)
@@ -32,9 +32,9 @@ run_DESeq=function(dds,dds_noBeta,contrast,cutoff=0.1)
     return(res_df)
 }
 
-myplotMA=function(dds,contrast){
+myplotMA=function(dds,contrast,p){
   res = results(dds,contrast = contrast)
-  plotMA(res,main=contrast,ylim=c(-2,2))
+  plotMA(res,main=contrast,ylim=c(-2,2),alpha=p)
 }
 add_norm_counts=function(dds,contrast,res){
   n_counts=counts(dds,normalized=T)
@@ -119,7 +119,7 @@ for ( i in 1:nrow(co)){
   runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
   runs[[i]]=clean_up_df(runs[[i]]) 
-  myplotMA(dds,cont)
+  myplotMA(dds,cont,p=pval)
   dev.off()
   write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
 }

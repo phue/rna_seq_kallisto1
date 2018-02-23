@@ -61,23 +61,15 @@ Differential expression analysis was carried out on the counts from [Kallisto](h
 
 For each contrast defined in the contrast file, a pair-wise differential expression test is being caried out. For dispersion estimates all samples provided to the pipeline are used.
 
-```{r, echo=FALSE,include=FALSE}
+```{r, echo=FALSE,include=FALSE, results='asis',comment=''}
 out = NULL
 for ( i in dir("maplots")){
-out = c(out, knit_expand("ddeseq_contrast.Rmd"))
+out = c(out, knit_child("ddeseq_contrast.Rmd"))
 }
 ```
 
+`r paste(out, collapse='\n')`
 
-```{r,echo = FALSE, results='asis'}
-cat(out)
-```
-
-Read more [here](./lists/contrast_group_ko_wt.csv) # It works!
-Read more [here](./lists/contrast_group_ko_wt.csv)
-
-
-P-value threshold is set to `r I(pvalue)`
 
 ## Alignment and aligment stats
 

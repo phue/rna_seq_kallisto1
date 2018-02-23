@@ -1,23 +1,33 @@
----
-title: "contrast"
-output: html_document
----
 
 
-
-```{r,echo=FALSE, results='asis'}
+```{r, echo=FALSE, results='asis'}
 name = sub(".png","",strsplit(i, "group_")[[1]][2])
 part = strsplit(name,"_")
-cat("\n###",part[[1]][1]," vs ",part[[1]][2],"\n")
+cat("\n### Results from ",part[[1]][1]," vs ",part[[1]][2],"\n")
 cat("\n")
 cat("<img src=\"",paste("maplots",i,sep="/"),"\" alt=\"maplot plot\">","\n",sep="")
 cat("\n")
+cat("*MAplot for ", part[[1]][1]," vs ",part[[1]][2],":*")
+```
+Each dot is one gene. On the x-axis we have the mean normalized counts across all samples used in the analysis (that is both conditions). On the the y-axis we have the log fold change between the conditions. Triangles indicate that the gene in question has a higher/lower fold change than what fits on the plot. The red color means that the gene has a adjusted p-value less than `r I(pvalue)`. 
+
+
+```{r, include=FALSE}
 csv=paste(paste0("contrast_group_",name),".csv",sep="")
-cat("Download full [gene list](./lists/",csv,")",sep="")
-cat("\n")
 a = read.csv(paste0("./lists/",csv))
-#print(head(a))
 ```
 
+```{r, echo=FALSE}
+a = read.csv(paste0("./lists/",csv))
+a = a[1:10,1:6]
+kable(head(a),caption="Top 10 DE genes" )
+```
+
+Table shows the top 10 DE genes, the ranking is based on the absolute log2 FC of the significant (at adjusted p-value of `r I(pvalue)`) genes. 
+In the full DE list the normalized counts for each sample is also included (columns 7 to end).
 
 
+```{r, echo=FALSE, results='asis'}
+cat("**Download the full [DE gene list](./lists/",csv,")"," for ",part[[1]][1]," vs ",part[[1]][2], " here.**\n",sep="")
+cat("\n")
+```
