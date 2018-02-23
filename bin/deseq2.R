@@ -35,7 +35,7 @@ run_DESeq=function(dds,dds_noBeta,contrast,cutoff)
 mybarplot = function(run, p){
     sigs = dplyr::filter(as.data.frame(run),padj<p)
     counts = dplyr::transmute(sigs, log_0 = sign(log2FoldChange) ,log_1=ifelse(abs(log2FoldChange)>1,1,0)*sign(log2FoldChange) , log_2= ifelse(abs(log2FoldChange)>2,1,0)*sign(log2FoldChange))
-    stats = cbind(apply(counts,2,function(x) y = sum(x==1)), apply(counts,2,function(x) y = sum(x==0)), apply(counts,2,function(x) y = sum(x==-1))
+    stats = cbind(apply(counts,2,function(x) y = sum(x==1)), apply(counts,2,function(x) y = sum(x==0)), apply(counts,2,function(x) y = sum(x==-1)))
    colnames(stats)=c("up","none","down")
    barplot(t(stats[,-2]),col=c("yellow","blue"),names.arg=c("abs(log2)>0","abs(log2)>1","abs(log2)>2" ),ylab="number significant genes")
 }
