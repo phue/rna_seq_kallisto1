@@ -399,6 +399,7 @@ publishDir "$params.output/deseq", mode: 'copy'
   file 'maplot_*' into maplots
   file 'contrast_*' into results
   file 'sessionInfo_deseq2.txt' into seinfo
+  file 'barplot_*' into barplots
 
   script:
   """
@@ -418,6 +419,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file 'maplots/*' from maplots.collect() 
 	file session from seinfo 	
 	file mypar
+	file 'barplots/*' from barplots.collect() 	
 
 	output:
  	file 'deseq2.html'

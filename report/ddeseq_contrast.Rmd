@@ -11,6 +11,12 @@ cat("*MAplot for ", part[[1]][1]," vs ",part[[1]][2],":*")
 ```
 Each dot is one gene. On the x-axis we have the mean normalized counts across all samples used in the analysis (that is both conditions). On the the y-axis we have the log fold change between the conditions. Triangles indicate that the gene in question has a higher/lower fold change than what fits on the plot. The red color means that the gene has a adjusted p-value less than `r I(pvalue)`. 
 
+```{r,echo = FALSE, results='asis'}
+j = sub("maplot","barplot",i)
+cat("<img src=\"",paste("barplots",j,sep="/"),"\" alt=\"barplot plot\">","\n",sep="")
+``` 
+
+
 
 ```{r, include=FALSE}
 csv=paste(paste0("contrast_group_",name),".csv",sep="")
