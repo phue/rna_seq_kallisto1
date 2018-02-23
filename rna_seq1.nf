@@ -12,7 +12,7 @@ params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.tab' // name, type, condition  
-params.anno_set 	= "araport_genes" // "atair10"  
+params.anno_set 	= "tair10" //"araport_genes" // "tair10"  
 //params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
 params.pvalue		= 0.1
@@ -403,7 +403,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
   script:
   """
-  deseq2.R kallisto ${design} ${contrasts} ${params.pvalue}
+  deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${txdb}
   """
 }
 
