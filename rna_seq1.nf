@@ -441,8 +441,9 @@ publishDir "$params.output/deseq", mode: 'copy'
 
 
 
-workflow.onComplete { 
-	println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
+workflow.onComplete {
+println "Pipeline completed at: $workflow.runName" 	
+println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
 
   	
