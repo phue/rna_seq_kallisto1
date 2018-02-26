@@ -405,6 +405,7 @@ publishDir "$params.output/deseq", mode: 'copy'
   	file 'contrast_*' into results
   	file 'sessionInfo_deseq2.txt' into seinfo
   	file 'barplot_*' into barplots
+	file 'Rarguments.txt' into argument
 
  	script:
   	"""
@@ -425,6 +426,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file session from seinfo 	
 	file mypar
 	file 'barplots/*' from barplots.collect() 	
+	file args from argument	
 
 	output:
  	file 'deseq2.html'

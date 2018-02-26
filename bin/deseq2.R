@@ -145,4 +145,5 @@ runs[[i]]=clean_up_df(runs[[i]])
 }
 
 writeLines(capture.output(sessionInfo()), "sessionInfo_deseq2.txt")
+writeLines(print(args),"Rarguments.txt")
 

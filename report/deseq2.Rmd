@@ -127,6 +127,11 @@ cat "modules.txt"
 cat "param.txt"
 ```
 
+### Arguments passed on to R
+```{r engine='bash', comment=''}
+cat "Rarguments.txt"
+```
+
 ### SessionInfo from DEseq2 R session
 ```{r engine='bash', comment=''}
 cat "sessionInfo_deseq2.txt"
