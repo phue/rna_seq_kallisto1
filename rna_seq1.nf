@@ -12,7 +12,7 @@ params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.tab' // name, type, condition  
-params.anno_set 	= "araport_genes" // "tair10"  
+params.anno_set 	= "tair10"// "araport_genes" // "tair10"  
 //params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
 params.pvalue		= 0.1
@@ -26,23 +26,23 @@ params.binsize		= 10
  ***************/
 
 if(params.anno_set == "tair10"){
-	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-	gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf") 
-	fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa")
-	starDir = "star_tair10"
-	kallistoDir = "tair10_transcripts.idx"
+	params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+	params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf") 
+	params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa")
+	params.starDir = "star_tair10"
+	params.kallistoDir = "tair10_transcripts.idx"
 	params.normtosize = '119146348'
-	txdb="tair10"
+	params.txdb="tair10"
 }
 
 if(params.anno_set == "araport_genes"){
-	fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-	gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf") 
-	fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes.201606.cdna.fasta.gz")
-	starDir = "star_araport"
-	kallistoDir = "araport_genes.idx"
+	params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+	params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf") 
+	params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes.201606.cdna.fasta.gz")
+	params.starDir = "star_araport"
+	params.kallistoDir = "araport_genes.idx"
 	params.normtosize = '119146348'
-	txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
+	params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
 
 report = file("report/deseq2.Rmd")
@@ -62,9 +62,9 @@ log.info "contrasts		: ${params.contrast}"
 log.info "p-value 		: ${params.pvalue}"
 log.info "norm. size		: ${params.normtosize}"
 log.info "binsize		: ${params.binsize}"
-log.info "txdb 			: ${txdb}"
-log.info "fasta dna		: ${fasta_dna}"
-log.info "fasta			: ${fasta}"
+log.info "txdb 			: ${params.txdb}"
+log.info "fasta dna		: ${params.fasta_dna}"
+log.info "fasta			: ${params.fasta}"
 log.info "\n"
 
 
@@ -86,14 +86,14 @@ file1 <<  "contrasts             : ${params.contrast} \n"
 file1 <<  "p-value               : ${params.pvalue} \n"
 file1 <<  "norm. size            : ${params.normtosize} \n"
 file1 <<  "binsize               : ${params.binsize} \n"
-file1 <<  "txdb                  : ${txdb} \n"
-file1 <<  "fasta dna             : ${fasta_dna} \n"
-file1 <<  "fasta                 : ${fasta} \n"
+file1 <<  "txdb                  : ${params.txdb} \n"
+file1 <<  "fasta dna             : ${params.fasta_dna} \n"
+file1 <<  "fasta                 : ${params.fasta} \n"
 
 
 
 mypar = file('param.txt')
-mod = file('nextflow.config')
+mod = file('nextflow.config') //modules loaded
 
 /*********************************************
 **********************************************
@@ -107,6 +107,8 @@ ANALYSIS START
 
 design = file(params.info)
 contrasts = file(params.contrast) 
+fasta = file(params.fasta)
+gtf = file(params.gtf)
 
 /*
  * validate input files
@@ -116,14 +118,18 @@ if( !design.exists() ) exit 1, "Missing sample info file: ${design}"
 if( !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
 // contrasts
 
-/* 
+/***********************
  * Channel for bam files
- */
+ ***********************/
 
 bam_files = Channel
           .fromPath(params.bam)
           .map { file -> [ id:file.baseName,file:file] }
 
+
+/***********************
+* Keeping track of moduls
+************************/
 
 process track {
 	input:
@@ -138,9 +144,10 @@ process track {
 	"""
 }
 
-/* 
+
+/********************** 
  * SORT BAM
- */
+ **********************/
 
 process sortBam {
 tag "sort: $id"
@@ -157,13 +164,13 @@ tag "sort: $id"
         """
 }
 
-/*
+/*********************
  * BAM TO FASTQ
- */
+ *********************/
 
 process generateFastq {
 tag "bam : $name, type:$params.seqtype"
-//publishDir "${params.output}/fastq", mode: 'copy'
+
 
         input:
         set  name, file(bam) from bam_sorted
@@ -184,35 +191,36 @@ tag "bam : $name, type:$params.seqtype"
         }
 }
 
-/*
+/***********************
  * COPY CHANNEL
- */
+ ***********************/
 
 fastqs.into { fastqs_kallisto; fastqs_star }
 
-/*
+
+/***********************
  * KALLISTO INDEX IF NEEDED
- */
+************************/
 
 process kallistoIndex {
-tag "dir: $kallistoDir"
+tag "dir: $params.kallistoDir"
 storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
 
    	input:
     	file fasta
 
     	output:
-    	file "${kallistoDir}" into transcriptome_index
+    	file "${params.kallistoDir}" into transcriptome_index
 
     	script:
     	"""
-    	kallisto index -i ${kallistoDir} ${fasta} 
+    	kallisto index -i ${params.kallistoDir} ${fasta} 
     	"""
 }
 
-/*
+/*************************
  *  KALLIST QUANT
- */
+ *************************/
 
 process quantKallisto {
 tag "fq: $name "
@@ -252,9 +260,9 @@ tag "fq: $name "
 	}
 }
 
-/*
+/*****************************
  *  COMBINE KALLISTO OUTPUT
- */
+ *****************************/
 
 kallisto_dirs.into{kallisto_dirs; kallisto_dirs_deseq2}
 
@@ -272,35 +280,34 @@ process kallistoCountMatrix {
 
 	script:
 	"""
-	sumkallisto.R kallisto ${txdb} ${design}
+	sumkallisto.R kallisto ${params.txdb} ${design}
 	"""
 }
 
-/* 
+/**************************** 
  * STAR INDEX IF NEEDED
- */
+ ****************************/
 	
 process STARindex {
-	tag "dir: $starDir"
+	tag "dir: $params.starDir"
 	storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
 
    	input:
-    	file fasta_dna
     	file gtf
 
     	output: 
-    	file "${starDir}" into star_index
+    	file "${params.starDir}" into star_index
 
     	script:
     	"""
-    	mkdir -p  ${starDir}
-    	STAR --runThreadN 4 --runMode genomeGenerate --genomeDir ${starDir} --genomeFastaFiles ${fasta_dna} --sjdbGTFfile ${gtf} 
+    	mkdir -p  ${params.starDir}
+    	STAR --runThreadN 4 --runMode genomeGenerate --genomeDir ${params.starDir} --genomeFastaFiles ${params.fasta_dna} --sjdbGTFfile ${params.gtf} 
    	 """
 }
 
-/*
+/***************************
  * STAR ALIGN
- */
+ ***************************/
 
 process STAR {
 	tag "star: $name"
@@ -336,9 +343,9 @@ process STAR_log {
 	"""
 }
 
-/*
+/***************************
  * COMBINE STAR COUNTS
- */ 
+ **************************/ 
 
 process starCountMatrix {
 
@@ -358,9 +365,9 @@ process starCountMatrix {
 	"""
 }
 
-/*
+/*****************************
  * BAM 2 BW
- */
+ ****************************/
 
 process bam2bw {
 	publishDir "$params.output/$name/bam_bw", mode: 'copy'
@@ -382,29 +389,27 @@ process bam2bw {
 }
 
 
-
-
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
-  input:
-  file 'kallisto/*' from kallisto_dirs_deseq2.collect()
-  file design
-  file contrasts
+ 	input:
+  	file 'kallisto/*' from kallisto_dirs_deseq2.collect()
+  	file design
+  	file contrasts
   
-  output:
-  file 'pairs.png' into pair
-  file 'dds.Rdata' into dds
-  file 'pca.png' into pca
-  file 'maplot_*' into maplots
-  file 'contrast_*' into results
-  file 'sessionInfo_deseq2.txt' into seinfo
-  file 'barplot_*' into barplots
+  	output:
+  	file 'pairs.png' into pair
+  	file 'dds.Rdata' into dds
+  	file 'pca.png' into pca
+  	file 'maplot_*' into maplots
+  	file 'contrast_*' into results
+  	file 'sessionInfo_deseq2.txt' into seinfo
+  	file 'barplot_*' into barplots
 
-  script:
-  """
-  deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${txdb}
-  """
+ 	script:
+  	"""
+  	deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb}
+ 	 """
 }
 
 process report {
