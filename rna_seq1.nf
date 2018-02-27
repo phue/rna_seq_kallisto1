@@ -268,15 +268,13 @@ kallisto_dirs.into{kallisto_dirs; kallisto_dirs_deseq2}
 
 process kallistoCountMatrix {
 	tag "anno: ${params.anno_set}"
-//	publishDir "$params.output/kallisto_data" , mode: 'copy'	
+	publishDir "$params.output/kallisto_data" , mode: 'copy'
 
 	input:
 	file 'kallisto/*' from kallisto_dirs.collect() 
 	
-
 	output:
 	file 'kallisto_counts.tab' 
-	file 'kallistoData.Rdata' //into kallistodata 	
 
 	script:
 	"""
@@ -357,7 +355,6 @@ process starCountMatrix {
 	
 	output:
 	file 'star_counts.tab'
-	file 'starData.Rdata' into stardata
 	
 	script:
 	"""
@@ -370,7 +367,7 @@ process starCountMatrix {
  ****************************/
 
 process bam2bw {
-	publishDir "$params.output/$name/bam_bw", mode: 'copy'
+	publishDir "$params.output/bam_bw", mode: 'copy'
         tag "bw: $name"
 
 	input:
@@ -414,7 +411,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 }
 
 process report {
-publishDir "$params.output/deseq", mode: 'copy'
+publishDir "$params.output/report", mode: 'copy'
 
         input:
 	file stats from stats
@@ -429,12 +426,12 @@ publishDir "$params.output/deseq", mode: 'copy'
 	file args from argument	
 
 	output:
- 	file 'deseq2.html'
+ 	file 'report.html'
 
 	script:
  	"""
-        cp -L $baseDir/report/ddeseq_contrast.Rmd . 
-	cp -L $baseDir/report/deseq2.Rmd . 
+        cp -L $baseDir/report/deseq_contrast.Rmd . 
+	cp -L $baseDir/report/report.Rmd . 
 	createReport.R 1 ${design} ${params.pvalue} ${stats}  ${contrasts} $workflow.sessionId
         """
 }
