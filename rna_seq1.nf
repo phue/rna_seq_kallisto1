@@ -427,6 +427,8 @@ publishDir "$params.output/report", mode: 'copy'
 
 	output:
  	file 'report.html'
+	file 'deseq_contrast.Rmd'
+	file 'report.Rmd'
 
 	script:
  	"""
@@ -436,10 +438,29 @@ publishDir "$params.output/report", mode: 'copy'
         """
 }
 
+process script {
+publishDir "$params.output/used_script", mode: 'copy'
 
+	input:
+	
+	output:
+	file 'deseq2.R'
+	file 'createReport.R'
+	file 'star_stats.sh'
+	file 'sumkallisto.R'
+	file 'sumstar.R'
 
-workflow.onComplete {
-println "Pipeline name: $workflow.sessionId" 	
+	script:
+	"""
+	cp  $baseDir/bin/deseq2.R .
+	cp  $baseDir/bin/createReport.R .
+	cp  $baseDir/bin/star_stats.sh .
+	cp  $baseDir/bin/sumkallisto.R .
+	cp  $baseDir/bin/sumstar.R .
+	"""
+}
+
+workflow.onComplete { 	
 println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
 
