@@ -8,6 +8,7 @@ params:
   p: "0.1"
   stat: "star_stats.tab"
   contrast_file: "contrast.tab"
+  sessionId: "name"
 ---
 
 ```{r setup, include=FALSE}
@@ -115,6 +116,12 @@ kable(s2c,caption ="samples file used")
 
 
 ## Used parameters, softwares and packages
+
+### Nextflow sessionId
+```{r,comment=NA}
+cat(params$sessionId)
+```
+
 
 ### Software and versions
 ```{r engine='bash', comment=''}

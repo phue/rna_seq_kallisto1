@@ -435,14 +435,14 @@ publishDir "$params.output/deseq", mode: 'copy'
  	"""
         cp -L $baseDir/report/ddeseq_contrast.Rmd . 
 	cp -L $baseDir/report/deseq2.Rmd . 
-	createReport.R 1 ${design} ${params.pvalue} ${stats}  ${contrasts}
+	createReport.R 1 ${design} ${params.pvalue} ${stats}  ${contrasts} $workflow.sessionId
         """
 }
 
 
 
 workflow.onComplete {
-println "Pipeline completed at: $workflow.runName" 	
+println "Pipeline name: $workflow.sessionId" 	
 println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
 
