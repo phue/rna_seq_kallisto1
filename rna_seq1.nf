@@ -409,7 +409,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
  	script:
   	"""
-  	deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb}
+  	deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
  	 """
 }
 

@@ -65,9 +65,6 @@ clean_up_df=function(res){
   new
 }
 
-write.resfile=function(res,filename){
-  write.csv(res,file=filename)
-}
 
 
 
@@ -104,6 +101,7 @@ countsToUse = round(counts)
 
 pval <- as.numeric(args[4])
 
+sessID <-args[6]
 
 ##################################################
 ### deseq2 - first part 
@@ -140,8 +138,11 @@ runs[[i]]=clean_up_df(runs[[i]])
   dev.off()
   CairoPNG(paste(paste("barplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
   mybarplot(runs[[i]],p=pval)
-  dev.off()  
-  write.resfile(runs[[i]], paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep="."))
+  dev.off()
+  com = paste("#",sessID)
+  file=paste(paste("contrast",paste(cont,collapse="_"),sep="_"),"csv",sep=".")   
+  write.table(com, file = file,sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
+  write.table(runs[[i]],file = file, append=T,sep=",",quote=FALSE)   
 }
 
 writeLines(capture.output(sessionInfo()), "sessionInfo_deseq2.txt")

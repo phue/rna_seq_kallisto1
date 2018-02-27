@@ -22,11 +22,11 @@ The proportions of significant (at adjusted p-value less then `r I(pvalue)`) up 
 
 ```{r, include=FALSE}
 csv=paste(paste0("contrast_group_",name),".csv",sep="")
-a = read.csv(paste0("./lists/",csv))
+a = read.table(paste0("./lists/",csv),sep=",")
 ```
 
 ```{r, echo=FALSE}
-a = read.csv(paste0("./lists/",csv))
+a = read.table(paste0("./lists/",csv),sep=",")
 a = a[1:10,1:6]
 kable(head(a),caption="Top 10 DE genes" )
 ```
