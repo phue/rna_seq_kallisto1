@@ -333,11 +333,10 @@ process STAR_log {
 
 	output:
 	file "star_stats.tab" into stats	
-	file "star_stats.pdf"
+
 	script:
 	"""
 	bash star_stats.sh
-	plot_star_stats.R ${design}
 	"""
 }
 

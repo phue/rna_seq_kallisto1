@@ -29,7 +29,7 @@ s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 
 ## Summery 
 
-This is the html report with the results from the nextflow pipeline rna_seq_kallisto1. The report contains figures and links to results. It also contains information about the run, such as the samples used, the parameters given to the pipeline, the softwares (incl version) used etc. This is important information and critical for being able to reproduce the results. It also information needed for writing the methods section should you happen to want to publish your results. Therefor, it is strongly recommended to keep the folders and files (.../) as they are and if doing any postprocessing of e.g. the genelists, to clearly document where the original file came from.   
+This is the html report with the results from the nextflow pipeline rna_seq_kallisto1. The report contains figures and links to results. It also contains information about the run, such as the samples used, the parameters given to the pipeline, the softwares (incl version) used etc. This is important information and critical for being able to reproduce the results. It also information needed for writing the methods section should you happen to want to publish your results. Therefor, it is strongly recommended to keep the folders and files (.../) as they are and if doing any post processing of e.g. the genelists, to clearly document where the original file came from.   
 
 See also report.html 
 
@@ -77,7 +77,7 @@ out = c(out, knit_child("deseq_contrast.Rmd"))
 
 The DE analysis is carried out using the kallisto output, that using the idea of pseudoalignment and not any "normal" alignment. However, an alignment is useful for e.g. genome browser visualisation and also as a quality matrix, hence in parallel to the DE analysis a [STAR](https://academic.oup.com/bioinformatics/article/29/1/15/272537) alignment was carried out.
 
-The bigwig file (bw) for each sample is available here (useful for genome browsing), the bam files are here.
+The bigwig file (useful for genome browser) for each sample is available [here](../bam_bw/), the bam files are here.
 
 ### Alignment stats
 
