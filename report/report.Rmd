@@ -117,12 +117,16 @@ kable(s2c,caption ="samples file used")
 ## Used parameters, softwares and packages
 
 ### Nextflow sessionId
+The sessionId is an unique identifier that is connected to a specific run of a specific pipeline. This identifier is included in the csv files, making it possible to connect a csv file with it's report and the whole set of parameters, softwares and packages used to generate the file.
+
 ```{r,comment=NA}
 cat(params$sessionId)
 ```
 
 
 ### Software and versions
+Those are the softwares (inc. version) that were loaded by the pipeline. For more detailed information see the file nextflow.config. 
+
 ```{r engine='bash', comment=''}
 cat "modules.txt"
 ```

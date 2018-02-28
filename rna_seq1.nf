@@ -437,6 +437,19 @@ publishDir "$params.output/report", mode: 'copy'
         """
 }
 
+process config {
+publishDir "$params.output/nextflow", mode: 'copy'
+	
+	input:
+	
+	output:
+	file 'nextflow.config'
+
+	script:
+	"""
+	cp  $baseDir/nextflow.config .
+	"""
+
 process script {
 publishDir "$params.output/used_script", mode: 'copy'
 
