@@ -384,6 +384,9 @@ process bam2bw {
 	"""
 }
 
+/*****************************
+* DESeq2
+*****************************/
 
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
@@ -409,7 +412,10 @@ publishDir "$params.output/deseq", mode: 'copy'
  	 """
 }
 
+/*******************************
 process report {
+*******************************/
+
 publishDir "$params.output/report", mode: 'copy'
 
         input:
@@ -437,6 +443,10 @@ publishDir "$params.output/report", mode: 'copy'
         """
 }
 
+/********************************
+process config
+********************************/
+
 process config {
 publishDir "$params.output/nextflow", mode: 'copy'
 	
@@ -444,12 +454,18 @@ publishDir "$params.output/nextflow", mode: 'copy'
 	
 	output:
 	file 'nextflow.config'
+	file 'rna_seq1.nf'
 
 	script:
 	"""
 	cp  $baseDir/nextflow.config .
+	cp  $baseDir/rna_seq1.nf .
 	"""
 }
+
+/********************************
+process script
+********************************/
 
 process script {
 publishDir "$params.output/used_script", mode: 'copy'
@@ -472,6 +488,7 @@ publishDir "$params.output/used_script", mode: 'copy'
 	cp  $baseDir/bin/sumstar.R .
 	"""
 }
+
 
 workflow.onComplete { 	
 println ( workflow.success ? "Done!" : "Oops .. something went wrong" )

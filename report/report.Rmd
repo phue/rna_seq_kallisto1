@@ -127,6 +127,7 @@ The *sessionId* is an unique identifier that is connected to a specific run of a
 ```{r,comment=NA}
 cat(params$sessionId)
 ```
+All scripts used are available [here](../used_script/) and the nrxtflow script itself is stored [here](../nextflow/rna_seq1.nf).
 
 
 ### Software and versions
