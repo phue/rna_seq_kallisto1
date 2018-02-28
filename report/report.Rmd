@@ -30,11 +30,11 @@ s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
 
 ### Intro
 
-This is the html report with the results from the nextflow pipeline rna_seq_kallisto. The report contains figures and links to results. It also contains information about the pipeline run, such as which samples used, the parameters given to the pipeline, the softwares (incl version) used etc. This is important information and critical for being able to reproduce the results. It also information needed for writing the methods section should you happen to want to publish your results. Therefor, it is strongly recommended to keep the results folder and it's files as they are. If you want to do any post processing of e.g. the genelists, it is recommended to clearly document where the original file came from as well as what has been done to the data in the post processing.    
+This is the html report with the results from the nextflow pipeline rna_seq_kallisto. The report contains figures and links to results. It also contains information about the pipeline run, such as which samples used, the parameters given to the pipeline, the softwares (incl version) used etc. This is important information and critical for being able to reproduce the results. It also information needed for writing the methods section should you happen to want to publish your results. Therefor, it is strongly recommended to keep the results folder and it's files as they are. If you want to do any post processing of e.g. the gene-lists, it is recommended to clearly document where the original file came from as well as what has been done to the data in the post processing.    
 
 **PLEASE NOTE** that the *sessionId* explained in the tab "Used parameters, softwares and packages" can be used to keep track of the which run generated a certain file.
 
-The different tabs in this report should be self explainatory, if anything is confussing please ask me (in person or by [email](mailto:elin.axelsson@gmi.oeaw.ac.at))
+The different tabs in this report should be self explanatory, if anything is confusing please ask me (in person or by [email](mailto:elin.axelsson@gmi.oeaw.ac.at))
  
 
 ## DESeq2 Results
@@ -52,19 +52,19 @@ Differential expression analysis was carried out on the counts from [Kallisto](h
 ### Scatterplot matrix
 <img src="pairs.png" alt="pairs plot">
 
-*Matrix plot of all against all samples:* Each dot is one gene, the x and y axes are the two samples. That is the plot in row *i*, column *j* ( [*i,j*] ) is the scatter plot of the sample in [*i,i*] and the sample in [*j,j*].  E.g. the plot in [2,1] has the sample from [1,1] on the x-asis and the sampl3 from [2,2] on the y-asis. The upper part of the matrix shows the spearman correlation between the corresponding samples.
+*Matrix plot of all against all samples:* Each dot is one gene, the x and y axes are the two samples. That is the plot in row *i*, column *j* ( [*i,j*] ) is the scatter plot of the sample in [*i,i*] and the sample in [*j,j*].  E.g. the plot in [2,1] has the sample from [1,1] on the x-axis and the sample from [2,2] on the y-axis. The upper part of the matrix shows the spearman correlation between the corresponding samples.
 
 
 
 ### PCA plot
 <img src="pca.png" alt="pca plot">
 
-*PCA plot of all samples*: The plot shows the two largerst PC, samples that are close to each other are more similar than samples further apart. Ideally one would like to see replicates clustering closely together and different conditions being clearly separeted.
+*PCA plot of all samples*: The plot shows the two largest PC, samples that are close to each other are more similar than samples further apart. Ideally one would like to see replicates clustering closely together and different conditions being clearly separated.
 
 
 ### Pair-wise DE analysis
 
-For each contrast defined in the contrast file, a pair-wise differential expression test is being caried out. For dispersion estimates all samples provided to the pipeline are used.
+For each contrast defined in the contrast file, a pair-wise differential expression test is being carried out. For dispersion estimates all samples provided to the pipeline are used.
 
 ```{r, echo=FALSE,include=FALSE, results='asis',comment=''}
 out = NULL
@@ -79,13 +79,13 @@ out = c(out, knit_child("deseq_contrast.Rmd"))
 ## Alignment and aligment stats
 
 
-The DE analysis is carried out using the kallisto output, that using the idea of pseudoalignment and not any "normal" alignment. However, an alignment is useful for e.g. genome browser visualisation and also as a quality matrix, hence in parallel to the DE analysis a [STAR](https://academic.oup.com/bioinformatics/article/29/1/15/272537) alignment was carried out.
+The DE analysis is carried out using the kallisto output, that using the idea of pseudo-alignment and not any "normal" alignment. However, an alignment is useful for e.g. genome browser visualization and also as a quality matrix, hence in parallel to the DE analysis a [STAR](https://academic.oup.com/bioinformatics/article/29/1/15/272537) alignment was carried out.
 
 The bigwig file (useful for genome browser) for each sample is available [here](../bam_bw/).
 
 ### Alignment stats
 
-Below is alignment statistics as given from the STAR software. Espacially the procentage of uniquely mapped reads and the average mapped length may be of interest. For RNA-seq we expect a high number of uniquly mapped reads. We also like to see that the proportion of uniquely mapped reads is approximately the same in all samples. Ideally the average mapped length should also be similar in all samples.
+Below is alignment statistics as given from the STAR software. Especially the percentage of uniquely mapped reads and the average mapped length may be of interest. For RNA-seq we expect a high number of uniquely mapped reads. We also like to see that the proportion of uniquely mapped reads is approximately the same in all samples. Ideally the average mapped length should also be similar in all samples.
 
 ```{r star_stat, message=FALSE}
 stat <- params$stat
@@ -127,7 +127,7 @@ The *sessionId* is an unique identifier that is connected to a specific run of a
 ```{r,comment=NA}
 cat(params$sessionId)
 ```
-All scripts used are available [here](../used_script/) and the nrxtflow script itself is stored [here](../nextflow/rna_seq1.nf).
+All scripts used are available [here](../used_script/) and the Nextflow script itself is stored [here](../nextflow/rna_seq1.nf).
 
 
 ### Software and versions
