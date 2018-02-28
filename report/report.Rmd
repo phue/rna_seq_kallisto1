@@ -3,10 +3,9 @@ title: "Results from rna_seq_kallisto1 pipeline"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 params:
-  kal_folder: "kallisto"
   design: "test"
-  p: "0.1"
   stat: "star_stats.tab"
+  p: "0.1"
   contrast_file: "contrast.tab"
   sessionId: "name"
 ---

@@ -433,7 +433,7 @@ publishDir "$params.output/report", mode: 'copy'
  	"""
         cp -L $baseDir/report/deseq_contrast.Rmd . 
 	cp -L $baseDir/report/report.Rmd . 
-	createReport.R 1 ${design} ${params.pvalue} ${stats}  ${contrasts} $workflow.sessionId
+	createReport.R ${design} ${params.pvalue}  ${contrasts} $workflow.sessionId
         """
 }
 
