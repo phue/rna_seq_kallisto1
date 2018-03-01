@@ -13,11 +13,9 @@ params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
 params.info 		= 'info.tab' // name, type, condition  
 params.anno_set 	= "tair10"// "araport_genes" // "tair10"  
-//params.deseq_type 	= "kallisto" // "star" // "NULL"
 params.contrast         = "contrasts.tab"  
 params.pvalue		= 0.1
 params.binsize		= 10
-//params.storage		= "/lustre/scratch/projects/berger_common/backup_berger_common/"
 
 //fasta_dna, fasta, gtf, params.normtosize, txdb, 
 
