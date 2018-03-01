@@ -84,14 +84,31 @@ In addition, if you have single read data, you might consider changing the follo
 
 In my experience those two parameters are not super critical to get 100% right. But if you know the mean and standard deviation it makes sense to provide it. 
 
-There are two ways to provide the parameters: either you edit the rna_seq1.nf file
+There are two ways to provide the parameters: either you edit the rna_seq1.nf file so that the file defined parameters suit you. By the way anything behind // is a comment, here in the parameters section the possible options are listed in this comment. So if you have paired data you would change the line:<br/>
 
-To acually run the pipeline you need to do the following:
-in the command line write
+params.seqtype = 'SR' // 'PR' <br/>
+to <br/> 
+params.seqtype = 'PR'
+
+The other way is to provide the parameters when calling the pipeline by adding --paraName Value to the call, e.g for above example --seqtype 'PR'.
+
+### Starting the pipeline
+
+To acually run the pipeline you first need to do load the Nextflow module by typing in the command line of the login node:<br/>
 ml Nextflow
+
+
+Now you are ready to call the nextflow pipeline by typing, again on the command line of the login node:<br/>
 nextflow run rna_seq1.nf
 
-the pipeline will submit jobs to the cluster so this you do not need to take care of. However you should not close the mendel terminal while the jobs are still running. If you think that your jobs will take a long time you can use the screen command
+please remember that if you did not edit the .nf file with your parameters you will need to add any non-default parameters, e.g.:<br/>
+nextflow run rna_seq1.nf --seqtype 'PR'
 
-The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe. Inside this folder is another folder called report and there is a file called report.html. That is the file you should. 
+The pipeline will submit jobs to the cluster so this you do not need to take care of. However you should not close the mendel terminal while the jobs are still running. If you think that your jobs will take a long time you can use the screen command. If you don't know it google 'screen command' or ask someone who might now, for example me (Elin).
 
+### Output
+
+The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe. Inside this folder is another folder called report and there is a file called report.html. That file you should open, it will explain the outputs and direct you to the different files. 
+
+## Recommended project set up
+In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Next copy (using the data moving node) your bam files into this folder. Next get the pipeline code (see section get pipeline). Now you will have two subfolders, the bams from before and a new folder called rna_seq_kallisto1. Move into rna_seq_kallisto1, here you will now have some folders and files. The ones you need to care about are: info.tab, contrasts.tab and to some extent rna_seq1.nf. What you have to do with those three files is decribed in this documentention in the sections data setup and Nextflow paramters.
