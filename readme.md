@@ -5,15 +5,20 @@ The first time you atempt to run the pipeline it might seem a bit complicated. B
 
 And I am very happy to help out at any time, so don't spend too much time getting frustrating if something is not clear or if you don't manage to get something to work!
 
-## Requirements:
+## Requirements
 
-### Computational requirements:
+### Computational requirements
 The **one and only** thing you'll need is a Mendel account. If you do not have one talk to the hpc office.
 
-### Data requirements:
+### Data requirements
 You need to have bam files of your sequencing runs (unaligned, demultiplexed). If you sequenced at the vbcf your data should be availaible in the group folder under /lab/Raw/demultiplexed/. If you can't find your data or have any other problem, then just contact me (Elin).
 
-## Setting up the pipeline:
+## Recommended project set up
+In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#Data-requirements)) into this folder. Next get the pipeline code (see section [get pipeline](#Get-pipeline). Now you will have two subfolders, the bams from before and a new folder called rna_seq_kallisto1. Move into rna_seq_kallisto1, here you will now have some folders and files. The ones you need to care about are: info.tab, contrasts.tab and to some extent rna_seq1.nf. What you have to do with those three files is decribed in this documentention in the sections [Data setup](#Data-setup) and [Nextflow parameters](#Nextflow-parameters).
+
+## Get pipeline
+
+## Setting up the pipeline
 
 ### Computational setup
 **This step is needed ONLY the very first time you run the pipeline on Mendel**
@@ -66,9 +71,9 @@ elf-29 WT<br/>
 Described above is the example where one has two condition and is interested in a comparison of the two. It is however possible to used the pipeline in more complex situations too. If there is for example three conditions (A,B,C) and one wants to for example compare A with B and B with C than this can be done too.
 
 
-## Running the pipeline:
+## Running the pipeline
 
-### Nextflow paramters:
+### Nextflow parameters
 
 If you open the file called rna_seq1.nf you will find on the very top a section called Parameters. This is a set of input information that is given to the pipeline. The parameters are run specific, meaning that one give different parameters for different datasets. However, some of the parameters do not need to be changed, so the ones you (may) need to provide are the following:
 
@@ -110,5 +115,6 @@ The pipeline will submit jobs to the cluster so this you do not need to take car
 
 The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe. Inside this folder is another folder called report and there is a file called report.html. That file you should open, it will explain the outputs and direct you to the different files. 
 
-## Recommended project set up
-In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Next copy (using the data moving node) your bam files into this folder. Next get the pipeline code (see section get pipeline). Now you will have two subfolders, the bams from before and a new folder called rna_seq_kallisto1. Move into rna_seq_kallisto1, here you will now have some folders and files. The ones you need to care about are: info.tab, contrasts.tab and to some extent rna_seq1.nf. What you have to do with those three files is decribed in this documentention in the sections data setup and Nextflow paramters.
+
+
+
