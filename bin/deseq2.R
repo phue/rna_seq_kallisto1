@@ -6,7 +6,6 @@ library(DESeq2)
 library(readr)
 library(tximport)
 library(TxDb.Athaliana.BioMart.plantsmart28)
-library(Cairo)
 
 ###############################################
 ## functions
@@ -93,7 +92,7 @@ keys <- keys(txdb)
 df = select(txdb, keys=keys,columns=c("TXCHROM", "TXSTART", "TXEND","TXNAME","TXSTRAND"), keytype="GENEID")
 tx2gene=df[,2:1]
 
-txi <- tximport(s2c$file, type = "kallisto", tx2gene = tx2gene, reader = read_tsv)
+txi <- tximport(s2c$file, type = "kallisto", tx2gene = tx2gene)
 counts=txi$counts
 colnames(counts)=s2c$sample
 countsToUse = round(counts)
