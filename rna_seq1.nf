@@ -411,9 +411,10 @@ publishDir "$params.output/deseq", mode: 'copy'
 }
 
 /*******************************
-process report {
+*report {
 *******************************/
 
+process report {
 publishDir "$params.output/report", mode: 'copy'
 
         input:
