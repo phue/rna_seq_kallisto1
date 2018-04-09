@@ -21,7 +21,7 @@ From: ubuntu:16.04
 	apt-get -y install libcurl4-openssl-dev libxml2-dev
 	mkdir -p /lustre
 
-	R --slave -e 'install.packages(c("XML","RCurl","dplyr","reshape2","knitr","rmarkdown","ggplot2","RMySQL"),repos="https://cloud.r-project.org/");source("https://bioconductor.org/biocLite.R");biocLite(c("DESeq2","AnnotationDbi","GenomeInfoDb","TxDb.Athaliana.BioMart.plantsmart28","tximport"))'
+	R --slave -e 'install.packages(c("XML","RCurl","dplyr","reshape2","knitr","rmarkdown","ggplot2","RMySQL","readr"),repos="https://cloud.r-project.org/");source("https://bioconductor.org/biocLite.R");biocLite(c("DESeq2","AnnotationDbi","GenomeInfoDb","TxDb.Athaliana.BioMart.plantsmart28","tximport"))'
 
 
 
