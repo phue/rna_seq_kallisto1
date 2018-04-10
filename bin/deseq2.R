@@ -78,7 +78,7 @@ s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE)
 s2c <- dplyr::mutate(s2c, name = paste(condition,sample,sep="_"))
 s2c <- dplyr::select(s2c, sample = run_accession, condition, name)
 s2c <- dplyr::mutate(s2c, path = kal_dirs)
-s2c <- dplyr::mutate(s2c, file = paste0(kal_dirs,"/abundance.tsv"))
+s2c <- dplyr::mutate(s2c, file = paste0(kal_dirs,"/abundance.h5"))
 s2c <- s2c[order(s2c$condition), ]
 
 
@@ -114,12 +114,12 @@ save(dds,dds_noBeta,file="dds.Rdata")
 
 ### initial plots
 ntd <- normTransform(dds)
-CairoPNG("pairs.png")
+png("pairs.png")
 pairs(assay(ntd),pch=".",labels = colData(dds)$group,upper.panel = panel.cor)
 dev.off()
 
 rld <- rlog(dds, blind=FALSE)
-CairoPNG("pca.png")
+png("pca.png")
 plotPCA(rld, intgroup=c("name"))
 dev.off()
 
@@ -132,10 +132,10 @@ for ( i in 1:nrow(co)){
 runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
 runs[[i]]=clean_up_df(runs[[i]])
-  CairoPNG(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
+  png(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)
   dev.off()
-  CairoPNG(paste(paste("barplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
+  png(paste(paste("barplot",paste(cont,collapse="_"),sep="_"),"png",sep="."))
   mybarplot(runs[[i]],p=pval)
   dev.off()
   com = paste("#",sessID)

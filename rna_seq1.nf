@@ -406,7 +406,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
  	script:
   	"""
-  	deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
+        singularity exec /lustre/scratch/projects/berger_common/sinularity_images/rna_seq1.simg Rscript deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
  	 """
 }
 
