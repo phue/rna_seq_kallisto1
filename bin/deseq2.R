@@ -21,10 +21,10 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
     text(0.5, 0.5, txt, cex = cex.cor * r)
 }
 
-run_DESeq=function(dds,dds_noBeta,contrast,cutoff)
+run_DESeq=function(dds,contrast,cutoff)
 {
-    res2 = results(dds_noBeta,contrast = contrast)
-    res = results(dds,contrast = contrast)
+    res2 = results(dds,contrast = contrast)##MLE
+    res = lfcShrink(dds,contrast = contrast)##MAP
     res$padj[is.na(res$padj)]=1
     res$log2_mle = res2$log2FoldChange
     res = as.data.frame(res)
@@ -42,7 +42,7 @@ mybarplot = function(run, p){
 
 
 myplotMA=function(dds,contrast,p){
-  res = results(dds,contrast = contrast)
+  res = lfcShrink(dds,contrast = contrast)
   plotMA(res,main=contrast,ylim=c(-2,2),alpha=p)
 }
 add_norm_counts=function(dds,contrast,res){
@@ -107,9 +107,8 @@ sessID <-args[6]
 
 colD=data.frame(group=s2c$condition,name=s2c$name)
 dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
-dds_noBeta=DESeq(dds,betaPrior=FALSE)
 dds=DESeq(dds)
-save(dds,dds_noBeta,file="dds.Rdata")
+save(dds,file="dds.Rdata")
 
 
 ### initial plots
@@ -129,7 +128,7 @@ co = read.table(args[3],header=T)
 runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-runs[[i]]=run_DESeq(dds,dds_noBeta,contrast=cont,cutoff=pval) 
+runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
 runs[[i]]=clean_up_df(runs[[i]])
   png(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
