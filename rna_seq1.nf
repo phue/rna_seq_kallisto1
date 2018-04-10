@@ -406,7 +406,7 @@ publishDir "$params.output/deseq", mode: 'copy'
 
  	script:
   	"""
-        singularity exec /lustre/scratch/projects/berger_common/sinularity_images/rna_seq1.simg Rscript deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
+        singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
  	 """
 }
 
@@ -437,8 +437,8 @@ publishDir "$params.output/report", mode: 'copy'
 	script:
  	"""
         cp -L $baseDir/report/deseq_contrast.Rmd . 
-	cp -L $baseDir/report/report.Rmd . 
-	createReport.R ${design} ${params.pvalue}  ${contrasts} $workflow.sessionId
+	cp -L $baseDir/report/report.Rmd .
+	singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue}  ${contrasts} $workflow.sessionId
         """
 }
 
