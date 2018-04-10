@@ -276,7 +276,7 @@ process kallistoCountMatrix {
 
 	script:
 	"""
-	sumkallisto.R kallisto ${params.txdb} ${design}
+	singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/sumkallisto.R kallisto ${params.txdb} ${design}
 	"""
 }
 
@@ -355,7 +355,7 @@ process starCountMatrix {
 	
 	script:
 	"""
-	sumstar.R star ${params.strand} ${design} 
+	singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/sumstar.R star ${params.strand} ${design} 
 	"""
 }
 
