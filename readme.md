@@ -1,8 +1,11 @@
 # How to run the pipeline
 ## Introduction
 
-The first time you atempt to run the pipeline it might seem a bit complicated. But even though the instructions are quite long, the whole procedure is really very simple once you get the hang of it. Much easier than e.g. Galaxy!
+The first time you atempt to run the pipeline it might seem a bit complicated. But even though the instructions are quite long, the whole procedure is really very simple once you get the hang of it. Much easier than e.g. Galaxy. It's a promise!
 
+Using this pipeline you can start your job with one (okay two) commands and then go on and do there stuff while the analysis is running.
+
+Another adventage is that the output of the pipeline contains all information about software, versions etc, meaning that 1) your results can be reproduced, by you or by others 2) it's easier to write the methods part of your paper!
 
 And I am very happy to help out at any time, so don't spend too much time getting frustrating if something is not clear or if you don't manage to get something to work!
 
@@ -29,18 +32,18 @@ cp -r .../.... .
 ## Recommended project set up
 In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#Data-requirements)) into this folder. Next get the pipeline code (see section [get pipeline](#Get-pipeline). Now you will have two subfolders, the bams from before and a new folder called rna_seq_kallisto1. Move into rna_seq_kallisto1, here you will now have some folders and files. The ones you need to care about are: info.tab, contrasts.tab and to some extent rna_seq1.nf. What you have to do with those three files is decribed in this documentention in the sections [Data setup](#Data-setup) and [Nextflow parameters](#Nextflow-parameters).
 
-The following lines of code is an example where "my_cool_project" is the name you want to give to your project and /full/path/to/bam/file is the path to the location of the bam file (e.g. for a file named myBAM that is in the lab folder: /net/gmi.oeaw.ac.at/berger/lab/Raw/demultiplexed/myBAM)
+The following lines of code is an example where "my_cool_project" is the name you want to give to your project and "/full/path/to/bam/file" is the path to the location of the bam file (e.g. for a file named myBAM that is in the lab folder: /net/gmi.oeaw.ac.at/berger/lab/Raw/demultiplexed/myBAM)
 
-/# all but the data copying step can be done on the login or data moving node. The copying step should be done on a data moving node.
-cd $WORK /# changing directory to the work directory
-mkdir my_cool_project /# creating a new folder for project
-cd my_cool_project /# moving into the new folder
-mkdir bams /# creating a new folder for the bam files
- \# this step should be done on a data moving node e.g. dmn0
- cp /full/path/to/bam/file bams \#  copying the bam files to the new folder - you will need to do this for each bam file 
-\# with git
+All but the data copying step can be done on the login or data moving node. The copying step should be done on a data moving node. </br>
 
-\# without git
+cd $WORK</br>
+mkdir my_cool_project </br>
+cd my_cool_project </br>
+mkdir bams </br>
+cp /full/path/to/bam/file bams  \#**REMEMBER: Use data moving node e.g. dmn0** </br>
+\# With git - use this step if you have access to GMI github, then skip the next step. </br>
+
+\# Without git - use this step if you do not have access to GMI github, then skip the previous step.</br>
 cp -r ////rna_seq_kallisto1 .
 cd rna_seq_kallisto1
 
