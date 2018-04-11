@@ -32,7 +32,7 @@ s2c <- dplyr::mutate(s2c, path = paste(sample_dir,sample,sep="/kallisto_"))
 ## check that the files in the path column exist
 if (length(setdiff(s2c$path,kal_dirs))>0) stop('samples and folders do not match')
 ## files to read 
-s2c <- dplyr::mutate(s2c, file = paste0(path,"/abundance.tsv"))
+s2c <- dplyr::mutate(s2c, file = paste0(path,"/abundance.h5"))
 s2c <- s2c[order(s2c$condition), ]
 
 ### do the tximport thing 
@@ -40,7 +40,7 @@ keys <- keys(txdb)
 print(head(keys))
 df = select(txdb, keys=keys,columns=c("TXCHROM", "TXSTART", "TXEND","TXNAME","TXSTRAND"), keytype="GENEID")
 tx2gene=df[,2:1]
-txi <- tximport(s2c$file, type = "kallisto", tx2gene = tx2gene, reader = read_tsv)
+txi <- tximport(s2c$file, type = "kallisto", tx2gene = tx2gene )
 counts=txi$counts
 colnames(counts)=s2c$sample
 countsToUse = round(counts)
