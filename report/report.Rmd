@@ -11,8 +11,6 @@ params:
 ---
 
 ```{r setup, include=FALSE}
-library(Cairo)
-knitr::opts_chunk$set(dev="CairoPNG")
 knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
 library(ggplot2)
