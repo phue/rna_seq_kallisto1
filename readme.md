@@ -3,6 +3,7 @@
 
 The first time you atempt to run the pipeline it might seem a bit complicated. But even though the instructions are quite long, the whole procedure is really very simple once you get the hang of it. Much easier than e.g. Galaxy!
 
+
 And I am very happy to help out at any time, so don't spend too much time getting frustrating if something is not clear or if you don't manage to get something to work!
 
 ## Requirements
@@ -13,23 +14,39 @@ The **one and only** thing you'll need is a Mendel account. If you do not have o
 ### Data requirements
 You need to have bam files of your sequencing runs (unaligned, demultiplexed). If you sequenced at the vbcf your data should be availaible in the group folder under /lab/Raw/demultiplexed/. If you can't find your data or have any other problem, then just contact me (Elin).
 
+## Get pipeline
+
+### Using git
+If you have a github account that is added to the GMI github, you can use git to clone the pipeline resposity by simply type the following:
+
+git clone
+
+### Without git
+If you don't have access to the GMI github and have no inteters in getting this set up for you, there is an alternative way. A copy of the respository is located at ..... . You can cp this folder:
+
+cp -r .../.... .
+
 ## Recommended project set up
 In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#Data-requirements)) into this folder. Next get the pipeline code (see section [get pipeline](#Get-pipeline). Now you will have two subfolders, the bams from before and a new folder called rna_seq_kallisto1. Move into rna_seq_kallisto1, here you will now have some folders and files. The ones you need to care about are: info.tab, contrasts.tab and to some extent rna_seq1.nf. What you have to do with those three files is decribed in this documentention in the sections [Data setup](#Data-setup) and [Nextflow parameters](#Nextflow-parameters).
 
-## Get pipeline
+The following lines of code is an example where "my_cool_project" is the name you want to give to your project and /full/path/to/bam/file is the path to the location of the bam file (e.g. for a file named myBAM that is in the lab folder: /net/gmi.oeaw.ac.at/berger/lab/Raw/demultiplexed/myBAM)
 
-## Setting up the pipeline
+/# all but the data copying step can be done on the login or data moving node. The copying step should be done on a data moving node.
+cd $WORK /# changing directory to the work directory
+mkdir my_cool_project /# creating a new folder for project
+cd my_cool_project /# moving into the new folder
+mkdir bams /# creating a new folder for the bam files
+ \# this step should be done on a data moving node e.g. dmn0
+ cp /full/path/to/bam/file bams \#  copying the bam files to the new folder - you will need to do this for each bam file 
+\# with git
 
-### Computational setup
-**This step is needed ONLY the very first time you run the pipeline on Mendel**
+\# without git
+cp -r ////rna_seq_kallisto1 .
+cd rna_seq_kallisto1
 
-On the login node execute the script called setup_r_packages.sh. This is done by simply writing in the command line:
 
-./setup_r_packages.sh
 
-The script will take a few minutes to run so please be patient.
-
-### Data setup
+## Data Setup
 
 **You will need to do every time you want to run a *new* analysis**
 
@@ -38,11 +55,11 @@ The text files you need are the following:
 * info.tab : information about the samples
 * contrasts.tab : defining the contrasts you want to test
 
-**info.tab**
+### info.tab
 
 This file contains three columns (run_accession,condition,sample), where the first is the name of the bam file (without the .bam extension), the second one defines the sample condition (e.g. wildtype, knockout etc) and the third indictes the seperate replicates (e.g 1,2,3... or A,B,C)
 
-**Tip1:** To get the right structure of this file you can simply open the included file info.tab file and edit it. Keep the first line (containing the headers) as is is and on line 2 and onwards insert your bam names, conditions and sample info.
+**Tip1:** To get the right structure of this file you can simply open the included file info.tab file and edit it. Keep the first line (containing the headers) as it is and on line 2 and onwards insert your bam names, conditions and sample info.
 
 **Tip2:** The condition can (should?)  be set to be more specific then the rather generic "wt" and "ko" used in the templete. E.g. one could consider using the naming guidelines for sequenicing submission.
 
@@ -55,9 +72,9 @@ run_accession condition sample<br/>
 12348_barcode4_extra_info clf-29 2<br/>
 
 
-**contrasts.tab**
+### contrasts.tab
 
-This is a very simple file, that defines which conditions you want to compare with each other. The file should have one column for each condition of interest. The name of the conditons should be the header (first line of the file). Each additional row is then one contrast (pair-wise comparison). If you want to compare condition A with condition B, so that a positive fold change means that a gene is higher expressed in A then in B, then  you define this contrast by setting a 1 in the column of the condition A and a -1 in the column of condition B.
+This is a very simple file, that defines which conditions you want to compare with each other. The file should have one column for each condition of interest. The name of the conditons should be the header (first line of the file). Each additional row is then one contrast (pair-wise comparison). If you want to compare condition A with condition B, so that a positive fold change means that a gene is higher expressed in A then in B, then you define this contrast by setting a 1 in the column of the condition A and a -1 in the column of condition B.
 
 **Tip1:** Again it is possible to use the existing contrasts.tab as a templete. Now you have to change the first row so that the names there are the same as the condition column of your info.tab. On the next line you define the contrast of your choice.
 
@@ -68,7 +85,13 @@ elf-29 WT<br/>
 
 
 **Extra:**
-Described above is the example where one has two condition and is interested in a comparison of the two. It is however possible to used the pipeline in more complex situations too. If there is for example three conditions (A,B,C) and one wants to for example compare A with B and B with C than this can be done too.
+Described above is the example where one has two condition and is interested in a comparison of the two. It is however possible to used the pipeline in more complex situations too. If there is for example three conditions (A,B,C) and one wants to for example compare A with B and B with C than this can be done too.:
+
+A B C</br>
+1 -1 0</br>
+0 1 -1</br>
+
+This will result in two different comparisons: First one where A is compared to B (line 2) and one where B is compared to C (line3).
 
 
 ## Running the pipeline
