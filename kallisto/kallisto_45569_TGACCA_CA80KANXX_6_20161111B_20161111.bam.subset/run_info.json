@@ -1,9 +1,0 @@
-{
-	"n_targets": 33602,
-	"n_bootstraps": 100,
-	"n_processed": 666608,
-	"kallisto_version": "0.42.4",
-	"index_version": 10,
-	"start_time": "Mon Apr  9 12:18:31 2018",
-	"call": "kallisto quant -i tair10_transcripts.idx -o kallisto_45569_TGACCA_CA80KANXX_6_20161111B_20161111.bam.subset --rf-stranded --single -l 180 -s 20 -b 100 45569_TGACCA_CA80KANXX_6_20161111B_20161111.bam.subset_1.fastq"
-}
