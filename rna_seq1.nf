@@ -487,9 +487,10 @@ publishDir "$params.output/used_script", mode: 'copy'
 	cp  $baseDir/bin/sumstar.R .
 	"""
 }
-
+ 
 
 workflow.onComplete { 	
+new File('param.txt').delete() // cleaning up
 println ( workflow.success ? "Done!" : "Oops .. something went wrong" )
 }
 
