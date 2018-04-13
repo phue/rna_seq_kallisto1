@@ -111,7 +111,7 @@ ggplot(stat_mat,aes(x=name,y=value,fill=name))+ geom_bar(stat="identity")+facet_
 ## Sample info {#s_info}
 
 ```{r arguments, echo=FALSE}
-s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
+s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE,sep=",")
 kable(s2c,caption ="samples file used")
 ```
 

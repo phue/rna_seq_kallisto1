@@ -74,7 +74,7 @@ The text files you need to edit are the following:
 
 ### info.tab
 
-This file contains three columns (run_accession,condition,sample), where the first is the name of the bam file (**without the .bam extension**), the second one defines the sample condition (e.g. wildtype, knockout etc) and the third the separate replicates (e.g 1,2,3... or A,B,C)
+This file contains three columns separated by a ",". The first is named "run_accession" and is the name of the bam file (**without the .bam extension**), the second is called "condition" and defines the sample condition (e.g. wildtype, knockout etc) and the last is called "sample" and defines the separate replicates (e.g 1,2,3... or A,B,C)
 
 **Tip1:** To get the right structure of this file you can simply open the included file info.tab file and edit it. Keep the first line (containing the headers) as it is and on line 2 and onwards insert your bam names, conditions and sample info.
 
@@ -82,11 +82,11 @@ This file contains three columns (run_accession,condition,sample), where the fir
 
 **Example:** Let's say you have 4 samples; two Col WT replicates and two Col clf-29 replicates. Your bam files are called 12345_barcode1_extra_info.bam, 12346_barcode2_extra_info.bam, 12347_barcode3_extra_info.bam, 12348_barcode4_extra_info.bam. You want to name the replicates 1 and 2. Then your info.tab would look like this:
 
-run_accession condition sample<br/>
-12345_barcode1_extra_info WT 1<br/>
-12346_barcode2_extra_info WT 2<br/>
-12347_barcode3_extra_info clf-29 1<br/>
-12348_barcode4_extra_info clf-29 2<br/>
+run_accession,condition,sample<br/>
+12345_barcode1_extra_info,WT,1<br/>
+12346_barcode2_extra_info,WT,2<br/>
+12347_barcode3_extra_info,clf-29,1<br/>
+12348_barcode4_extra_info,clf-29,2<br/>
 
 
 ### contrasts.tab
@@ -97,8 +97,8 @@ This is a very simple file, it only defines which conditions you want to compare
 
 **Example:** Given the info.tab example above, let's say that you want to compare the clf-29 KO with the WT. That is genes that are up-regulated in the ko will have a positive fold change, whereas down-regulated genes have negative fold changes. Then the contrasts.tab should look like this:
 
-elf-29 WT<br/>
-1 -1<br/>
+elf-29,WT<br/>
+1,-1<br/>
 
 
 **Extra:**

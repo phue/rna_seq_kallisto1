@@ -124,7 +124,7 @@ dev.off()
 
 
 ### analysis + MA plots
-co = read.table(args[3],header=T)
+co = read.table(args[3],header=T,sep=",")
 runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
