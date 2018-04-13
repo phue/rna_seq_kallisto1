@@ -1,4 +1,7 @@
 # How to run the pipeline
+
+If you at any time have **any problems**; with the manual, the pipeline or anything else related to this, **just contact me (Elin)**
+
 ## Introduction
 
 The first time you attempt to run the pipeline it might seem a bit complicated. But even though the instructions are quite long, the whole procedure is really very simple once you get the hang of it. Much easier than e.g. Galaxy.
@@ -104,9 +107,9 @@ elf-29,WT<br/>
 **Extra:**
 Described above is the example where one has two condition and is interested in a comparison of the two. It is however possible to used the pipeline in more complex situations too. If there is for example three conditions (A,B,C) and one wants to for example compare A with B and B with C than this can be done too.:
 
-A B C</br>
-1 -1 0</br>
-0 1 -1</br>
+A,B,C</br>
+1,-1,0</br>
+0,1,-1</br>
 
 This will result in two different comparisons: First one where A is compared to B (line 2) and one where B is compared to C (line3).
 
@@ -196,8 +199,14 @@ For more information about Nextflow see https://www.nextflow.io/ and read the pa
 
 
 ### Output
-### NOT DONE
-The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe. Inside this folder is another folder called report and there is a file called report.html. That file you should open, it will explain the outputs and direct you to the different files. 
+
+The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe.
+To do this you need to use the **data moving node** again. E.g.</br>
+
+cp -r $WORK/my_cool_project/rna_seq_kallisto1/results to/my/storage </br>
+
+where "to/my/storager" is the full path location where you want to keep the results. </br>
+Inside this folder is another folder called "report" and there is a file called "report.html". That file you should open, it will explain the outputs and direct you to the different files.
 
 
 
