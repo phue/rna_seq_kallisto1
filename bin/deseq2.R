@@ -74,7 +74,7 @@ args <- commandArgs(TRUE)
 sample_id <- dir(args[1])
 kal_dirs <- sapply(sample_id, function(id) file.path(args[1], id))
 
-s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE)
+s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE,sep=",")
 s2c <- dplyr::mutate(s2c, name = paste(condition,sample,sep="_"))
 s2c <- dplyr::select(s2c, sample = run_accession, condition, name)
 s2c <- dplyr::mutate(s2c, path = kal_dirs)

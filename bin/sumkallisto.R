@@ -25,7 +25,7 @@ kal_dirs <- sapply(sample_id, function(id) file.path(sample_dir, id))
 print(kal_dirs)
 
 ## generate sample 2 condition table for design 
-s2c <- read.table(design, header = TRUE, stringsAsFactors=FALSE)
+s2c <- read.table(design, header = TRUE, stringsAsFactors=FALSE,sep=",")
 s2c <- dplyr::select(s2c, sample = run_accession, condition)
 ## path generated from sample in table
 s2c <- dplyr::mutate(s2c, path = paste(sample_dir,sample,sep="/kallisto_"))

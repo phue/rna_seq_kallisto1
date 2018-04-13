@@ -19,7 +19,7 @@ library(readr)
 library(tximport)
 contrast_file = params$contrast_file ## maybe remove as parameter
 s2c_file <- params$design
-s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE)
+s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE,sep=",")
 ```
 
 # {.tabset}
