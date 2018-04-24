@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="http://s3.jfh.me/css/john-full.css" type="text/css" />
+</head>
+<body>
+<h1 id="how-to-run-the-pipeline">How to run the pipeline</h1>
+<p>If you at any time have <strong>any problems</strong>; with the manual, the pipeline or anything else related to this, <strong>just contact me (Elin)</strong></p>
+<h2 id="introduction">Introduction</h2>
+<p>The first time you attempt to run the pipeline it might seem a bit complicated. But even though the instructions are quite long, the whole procedure is really very simple once you get the hang of it. Much easier than e.g. Galaxy.</p>
+<p>Using this pipeline you can start your job with one (okay two) command(s) and then go on and do other stuff while the analysis is running.</p>
+<p>Another advantage is that the output of the pipeline contains all information about software, versions etc. It also provides a full documentation of every single step that has been done. This means that 1. your results can be reproduced, by you or by others 2. it's easy to write this methods part of your paper</p>
+<p><strong>Tip:</strong> I am happy to help out at any time, so don't spend too much time getting frustrating if something is not clear or if you don't manage to get something to work!</p>
+<h2 id="requirements">Requirements</h2>
+<h3 id="computational-requirements">Computational requirements</h3>
+<p>The <strong>one and only</strong> thing you'll need is a Mendel account. If you do not have one talk to the hpc office. Oh, and access to a computer of course...</p>
+<h3 id="data-requirements">Data requirements</h3>
+<p>You need to have bam files of your sequencing runs (unaligned, demultiplexed). If you have sequenced at the vbcf, then your data should be available in the group folder under /lab/Raw/demultiplexed/. If you can't find your data or have any other problem, then just contact me (Elin).</p>
+<h2 id="get-pipeline">Get pipeline</h2>
+<h3 id="using-git">Using git</h3>
+<p>If you have a github account that is added to the GMI github, you can use git to clone the pipeline repository by simply type the following:</p>
+<p>git clone https://github.com/Gregor-Mendel-Institute/rna_seq_kallisto1.git</p>
+<h3 id="without-git">Without git</h3>
+<p>If you don't have access to the GMI github and have no interest in getting this set up for you, there is an alternative way. A copy of the repository is located at /lustre/scratch/projects/berger_common/pipelines/. You can cp this folder to your current folder by typing (<strong>NB the dot at the end of the line</strong>):</p>
+<p>cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 .</p>
+<h2 id="recommended-project-setup">Recommended project setup</h2>
+<p>In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see <a href="#data-requirements">Data requirements</a>) into this folder. Next get the pipeline code (see section <a href="#get-pipeline">Get pipeline</a>). Now you will have two subfolders, the bams folder that you created and a new folder called rna_seq_kallisto1.</p>
+<p>The following lines shows how to do what was described above. Here &quot;my_cool_project&quot; is the name you want to give to your project and &quot;/full/path/to/bam/file&quot; is the path to the location of the bam file (e.g. for a file named myBAM that is in the lab folder: /net/gmi.oeaw.ac.at/berger/lab/Raw/demultiplexed/myBAM). All but the data copying step can be done on the login or data moving node. The copying step should be done on a data moving node. </br></p>
+<p>cd $WORK</br> mkdir my_cool_project </br> cd my_cool_project </br> mkdir bams </br></p>
+<p># Use <strong>data moving node</strong> e.g. dmn0 for the next step </br> cp /full/path/to/bam/file bams </br> # repeat the above line for for each bam file in your project</br></p>
+<p># With git - use this step if you have access to GMI github, then skip the next step. </br> git clone https://github.com/Gregor-Mendel-Institute/rna_seq_kallisto1.git # Without git - use this step if you do not have access to GMI github, then skip the previous step. (<strong>NB the dot at the end</strong>) </br> cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 . </br></p>
+<p>If you now type:</br> ls</br> you will see that you have the two subfolders mentioned above (bams and rna_seq_kallisto1).</p>
+<p>Now you are ready for the next step. First move into rna_seq_kallisto1:</br> cd rna_seq_kallisto1</br> here you will now have some folders and files. Type:</br> ls</br> to list them. The ones you need to care about are: <em>info.tab</em>, <em>contrasts.tab</em> and to some extent <em>rna_seq1.nf</em>. What you have to do with those three files is described in this documentation in the sections <a href="#data-setup">Data setup</a> and <a href="#nextflow-parameters-of-interest">Nextflow parameters of interest</a>.</p>
+<h2 id="data-setup">Data setup</h2>
+<p><strong>You will need to do this every time you want to run a <em>new</em> analysis</strong></p>
+<p>The text files you need to edit are the following:</p>
+<ul>
+<li>info.tab : information about the samples</li>
+<li>contrasts.tab : defining the contrasts you want to test</li>
+</ul>
+<h3 id="info.tab">info.tab</h3>
+<p>This file contains three columns separated by a &quot;,&quot;. The first is named &quot;run_accession&quot; and is the name of the bam file (<strong>without the .bam extension</strong>), the second is called &quot;condition&quot; and defines the sample condition (e.g. wildtype, knockout etc) and the last is called &quot;sample&quot; and defines the separate replicates (e.g 1,2,3... or A,B,C)</p>
+<p><strong>Tip1:</strong> To get the right structure of this file you can simply open the included file info.tab file and edit it. Keep the first line (containing the headers) as it is and on line 2 and onwards insert your bam names, conditions and sample info.</p>
+<p><strong>Tip2:</strong> The condition can (should?) be set to be more specific then the rather generic &quot;wt&quot; and &quot;ko&quot; used in the templete. E.g. one could consider using the naming guidelines for sequencing submission.</p>
+<p><strong>Example:</strong> Let's say you have 4 samples; two Col WT replicates and two Col clf-29 replicates. Your bam files are called 12345_barcode1_extra_info.bam, 12346_barcode2_extra_info.bam, 12347_barcode3_extra_info.bam, 12348_barcode4_extra_info.bam. You want to name the replicates 1 and 2. Then your info.tab would look like this:</p>
+<p>run_accession,condition,sample<br/> 12345_barcode1_extra_info,WT,1<br/> 12346_barcode2_extra_info,WT,2<br/> 12347_barcode3_extra_info,clf-29,1<br/> 12348_barcode4_extra_info,clf-29,2<br/></p>
+<h3 id="contrasts.tab">contrasts.tab</h3>
+<p>This is a very simple file, it only defines which conditions you want to compare with each other. The file should have one column for each condition. The name of the conditions should be the header (first line) of the file. Each additional row is then one contrast (pair-wise comparison). If you want to compare condition A with condition B, so that a positive fold change means that a gene is higher expressed in A then in B, then you define this contrast by setting a 1 in the column of the condition A and a -1 in the column of condition B.</p>
+<p><strong>Tip1:</strong> Again it is possible to use the existing contrasts.tab as a template. Now you have to change the first row so that the names there are the same as the condition column of your info.tab. On the next line you define the contrast of your choice.</p>
+<p><strong>Example:</strong> Given the info.tab example above, let's say that you want to compare the clf-29 KO with the WT. That is genes that are up-regulated in the ko will have a positive fold change, whereas down-regulated genes have negative fold changes. Then the contrasts.tab should look like this:</p>
+<p>elf-29,WT<br/> 1,-1<br/></p>
+<p><strong>Extra:</strong> Described above is the example where one has two condition and is interested in a comparison of the two. It is however possible to used the pipeline in more complex situations too. If there is for example three conditions (A,B,C) and one wants to for example compare A with B and B with C than this can be done too.:</p>
+<p>A,B,C</br> 1,-1,0</br> 0,1,-1</br></p>
+<p>This will result in two different comparisons: First one where A is compared to B (line 2) and one where B is compared to C (line3).</p>
+<h2 id="running-the-pipeline">Running the pipeline</h2>
+<h3 id="nextflow-parameters-of-interest">Nextflow parameters of interest</h3>
+<p>If you open the file called rna_seq1.nf in the rna_seq_kallisto1 folder you will find, on the very top, a section called &quot;Parameters&quot;. This section contains is a set of input information that is given to the pipeline. The parameters are run-specific, meaning that one can give different parameters for different datasets. However, some of the parameters here do not need to be changed, so the ones you (may) need to provide are the following:</p>
+<p><strong>params.bam:</strong> this is the path to the folder where you have your raw bam files followed by '/*.bam' which tells the pipeline to take all files with the .bam extension as input files (NB the folder should contain ONLY the bam files your are interested in). <strong>If you follow the 'recommended project setup', then the default path will work for you and you can leave it as it is.</strong><br/></p>
+<p><strong>params.seqtype:</strong> this should be set to SR (Single read) or PR (Paired read). As most RNA-seq is single read, SR is set to be the default, meaning that <strong>if you have single read data you do not need to change this parameter.</strong><br/></p>
+<p><strong>params.strand:</strong> this parameter tells the pipeline what type of strand specificity your data has. This is decided by the kit used for library preparation. The most common type is &quot;reverse first&quot; (RF-strand), this means that the read (or the first read if paired) comes from the reverse strand. RF-strand is the default setting so <strong>if you have &quot;reverse first&quot; strand specificity you do not need to change this parameter.</strong> The other options are: fr-stand (read, or first read in paired data, comes from forward strand) and NULL for un-stranded data (e.g from SMART2)<br/></p>
+<p><strong>params.anno_set:</strong> which annotations you want to use. Options so far (more can be added on demand) are &quot;tair10&quot; and &quot;araport11&quot; where &quot;tair10&quot; is the default.</p>
+<p>In addition, if you have single read data, you might consider changing the following two parameters:</p>
+<p><strong>params.fragment_len</strong>: this is an estimate of the mean fragment length. The default setting is 180 bp.<br/> <strong>params.fragment_sd</strong>: this is an estimate of the fragment length standard deviation. The default is set to 20.<br/></p>
+<p>In my experience it's not super critical to get those two parameters 100% right. But if you know the mean and standard deviation it makes sense to provide this information.</p>
+<h3 id="how-to-use-non-default-parameters">How to use non-default parameters</h3>
+<p>If you want to use non-default parameters there are two ways to pass your parameters to the pipeline:</p>
+<p><strong>OPTION 1: Editing the rna_seq1.nf file</strong></p>
+<p>You can edit the rna_seq1.nf file so that the file defined parameters suit you. In the rna_seq1.nf file anything after a // is a comment. In the parameters section the possible parameter options are listed as a comment.</p>
+<p><strong>Example:</strong> If you have paired data you would change the line:<br/> params.seqtype = 'SR' // 'PR' <br/> to <br/> params.seqtype = 'PR'</p>
+<p><strong>OPTION 2: Include parameters in pipeline run</strong></p>
+<p>The other way is to provide the parameters when calling the pipeline by adding --paraName Value to the call, e.g. for above example add --seqtype 'PR' to the run command. See also <a href="#starting-the-pipeline">Starting the pipeline</a> for more information and an example.</p>
+<h3 id="starting-the-pipeline">Starting the pipeline</h3>
+<p>To actually run the pipeline you first need to load the Nextflow module by typing in the command line of the login node:<br/> ml Nextflow</p>
+<p>Then make sure you are in the subfolder rna_seq_kallisto1. Start the nextflow pipeline by typing, again on the command line of the login node:<br/> nextflow run rna_seq1.nf</p>
+<p>Please remember that if you did not edit the rna_seq1.nf file with your parameters you will need to add any non-default parameters to the run command, e.g.:<br/> nextflow run rna_seq1.nf --seqtype 'PR'</p>
+<p>The pipeline will now do the rest, it will for example load modules and submit jobs to the cluster without you having to do anything. However <em>you should not close the mendel terminal while the jobs are still running</em>. If you think that your jobs will take a long time you can use the screen command. If you don't know it google 'screen command' or ask someone who might know, for example me (Elin).</p>
+<h3 id="advanced-run-options">Advanced run options</h3>
+<p>This section is for advanced users. In most cases you will not need to read this (unless you are interested!)</p>
+<p><strong>Run in background</strong></br> If you want to continue working in the terminal where you launch the pipeline, then you can use the -bg option (bg = background). Nextflow will still send messages to the terminal when new processes are being submitted.</p>
+<p>nextflow run -bg rna_seq1.nf<br/></p>
+<p><strong>Restart failed/interrupted run</strong></br> If your run fails for reasons that you know*, e.g. you killed it, you can use the resume option. This means that any process that had finished before the pipeline failed will be &quot;reused&quot; and the pipeline will not spend time on re-running those.</p>
+<p>nextflow run rna_seq1.nf -resume</p>
+<p>*If the pipeline fails and it's not obvious why - contact me (Elin)</p>
+<p><strong>More options</strong></br> The pipeline uses Nextflow a software developed for reproducible scientific workflows. If you type the following commands in login node terminal:</br></p>
+<p>ml Nextflow</br> nextflow -h</br> and/or</br> nextflow run -h</br></p>
+<p>Than all available options and commands will be listed in your terminal.</p>
+<p>For more information about Nextflow see https://www.nextflow.io/ and read the paper: P. Di Tommaso, et al. <em>Nextflow enables reproducible computational workflows.</em> Nature Biotechnology 35, 316–319 (2017) <a href="https://www.nature.com/articles/nbt.3820">doi:10.1038/nbt.3820</a></p>
+<h3 id="output">Output</h3>
+<p>The pipeline will generate a output folder (by default called 'results') This folder would contain everything you need and is the only thing you need to save somewhere safe. To do this you need to use the <strong>data moving node</strong> again. E.g.</br></p>
+<p>cp -r $WORK/my_cool_project/rna_seq_kallisto1/results to/my/storage </br></p>
+<p>where &quot;to/my/storager&quot; is the full path location where you want to keep the results. </br> Inside this folder is another folder called &quot;report&quot; and there is a file called &quot;report.html&quot;. That file you should open, it will explain the outputs and direct you to the different files.</p>
+</body>
+</html>
