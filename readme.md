@@ -22,21 +22,21 @@ The **one and only** thing you'll need is a Mendel account. If you do not have o
 ### Data requirements
 You need to have bam files of your sequencing runs (unaligned, demultiplexed). If you have sequenced at the vbcf, then your data should be available in the group folder under /lab/Raw/demultiplexed/. If you can't find your data or have any other problem, then just contact me (Elin).
 
-## Get pipeline
+## Get pipeline 
 
 ### Using git
-### NOT DONE
 
 If you have a github account that is added to the GMI github, you can use git to clone the pipeline repository by simply type the following:
-git clone
+
+git clone https://github.com/Gregor-Mendel-Institute/rna_seq_kallisto1.git
 
 ### Without git
 If you don't have access to the GMI github and have no interest in getting this set up for you, there is an alternative way. A copy of the repository is located at /lustre/scratch/projects/berger_common/pipelines/. You can cp this folder to your current folder by typing (**NB the dot at the end of the line**):
 
 cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 .
 
-## Recommended project set up
-In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#Data-requirements)) into this folder. Next get the pipeline code (see section [get pipeline](#Get-pipeline)). Now you will have two subfolders, the bams folder that you created and a new folder called rna_seq_kallisto1.
+## Recommended project setup
+In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#data-requirements)) into this folder. Next get the pipeline code (see section [Get pipeline](#get-pipeline)). Now you will have two subfolders, the bams folder that you created and a new folder called rna_seq_kallisto1.
 
 The following lines shows how to do what was described above. Here "my_cool_project" is the name you want to give to your project and "/full/path/to/bam/file" is the path to the location of the bam file (e.g. for a file named myBAM that is in the lab folder: /net/gmi.oeaw.ac.at/berger/lab/Raw/demultiplexed/myBAM). All but the data copying step can be done on the login or data moving node. The copying step should be done on a data moving node. </br>
 
@@ -50,7 +50,7 @@ cp /full/path/to/bam/file bams  </br>
 \# repeat the above line for for each bam file in your project</br>
 
 \# With git - use this step if you have access to GMI github, then skip the next step. </br>
-### NOT DONE
+git clone https://github.com/Gregor-Mendel-Institute/rna_seq_kallisto1.git
 \# Without git - use this step if you do not have access to GMI github, then skip the previous step. (**NB the dot at the end**) </br>
 cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 . </br>
 
@@ -62,11 +62,11 @@ Now you are ready for the next step. First move into rna_seq_kallisto1:</br>
 cd rna_seq_kallisto1</br>
 here you will now have some folders and files. Type:</br>
 ls</br>
-to list them. The ones you need to care about are: *info.tab*, *contrasts.tab* and to some extent *rna_seq1.nf*. What you have to do with those three files is described in this documentation in the sections [Data setup](#Data-setup) and [Nextflow parameters](#Nextflow-parameters).
+to list them. The ones you need to care about are: *info.tab*, *contrasts.tab* and to some extent *rna_seq1.nf*. What you have to do with those three files is described in this documentation in the sections [Data setup](#data-setup) and [Nextflow parameters of interest](#nextflow-parameters-of-interest).
 
 
 
-## Data Setup
+## Data setup
 
 **You will need to do this every time you want to run a *new* analysis**
 
@@ -120,7 +120,7 @@ This will result in two different comparisons: First one where A is compared to 
 
 If you open the file called rna_seq1.nf in the rna_seq_kallisto1 folder you will find, on the very top, a section called "Parameters". This section contains is a set of input information that is given to the pipeline. The parameters are run-specific, meaning that one can give different parameters for different datasets. However, some of the parameters here do not need to be changed, so the ones you (may) need to provide are the following:
 
-**params.bam:** this is the path to the folder where you have your raw bam files followed by  '/\*.bam' which tells the pipeline to take all files with the .bam extension as input files (NB the folder should contain ONLY the bam files your are interested in). **If you follow the 'recommended project set up', then the default path will work for you and you can leave it as it is.**<br/>
+**params.bam:** this is the path to the folder where you have your raw bam files followed by  '/\*.bam' which tells the pipeline to take all files with the .bam extension as input files (NB the folder should contain ONLY the bam files your are interested in). **If you follow the 'recommended project setup', then the default path will work for you and you can leave it as it is.**<br/>
 
 **params.seqtype:** this should be set to SR (Single read) or PR  (Paired read). As most RNA-seq is single read, SR is set to be the default, meaning that **if you have single read data you do not need to change this parameter.**<br/>
 
@@ -151,7 +151,7 @@ params.seqtype = 'PR'
 
 **OPTION 2: Include parameters in pipeline run**
 
-The other way is to provide the parameters when calling the pipeline by adding --paraName Value to the call, e.g. for above example add --seqtype 'PR' to the run command. See also [Starting the pipeline](#Starting-the-pipeline) for more information and an example.
+The other way is to provide the parameters when calling the pipeline by adding --paraName Value to the call, e.g. for above example add --seqtype 'PR' to the run command. See also [Starting the pipeline](#starting-the-pipeline) for more information and an example.
 
 ### Starting the pipeline
 
