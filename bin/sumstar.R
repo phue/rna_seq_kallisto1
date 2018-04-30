@@ -22,7 +22,7 @@ if (strand =="fr-stranded"){
 star_dirs <- sapply(sample_id, function(id) file.path(sample_dir, id))
 
 ## generate sample 2 condition table for design 
-s2c <- read.table(design, header = TRUE, stringsAsFactors=FALSE, sep=",")
+s2c <- read.table(design, header = TRUE, stringsAsFactors=FALSE, sep=",",colClasses = c("character","character","character"))
 s2c <- dplyr::select(s2c, sample = run_accession, condition)
 s2c <- dplyr::mutate(s2c, path = paste0(paste(sample_dir,sample,sep="/"),"ReadsPerGene.out.tab"))
 ## check that the files in the path column exist
