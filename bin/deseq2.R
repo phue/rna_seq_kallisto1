@@ -75,6 +75,10 @@ sample_id <- dir(args[1])
 kal_dirs <- sapply(sample_id, function(id) file.path(args[1], id))
 
 s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE,sep=",",colClasses=c("character","character","character"))
+mn_condition = make.names(s2c$condition)
+if (length(unique(mn_condition))!=length(unique(s2c$condition)))
+	stop("Condition names contain characters that can not be resolved,please use only numbers, letteers, dot and underscore")
+s2c$condition = mn_condition
 s2c <- dplyr::mutate(s2c, name = paste(condition,sample,sep="_"))
 s2c <- dplyr::select(s2c, sample = run_accession, condition, name)
 s2c <- dplyr::mutate(s2c, path = kal_dirs)
@@ -126,11 +130,11 @@ dev.off()
 ### analysis + MA plots
 co = read.table(args[3],header=T,sep=",")
 runs=list()
-for ( i in 1:nrow(co)){
+for ( i in 9:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
- runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
-runs[[i]]=clean_up_df(runs[[i]])
+  runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
+  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
+  runs[[i]]=clean_up_df(runs[[i]])
   png(paste(paste("maplot",paste(cont,collapse="_"),sep="_"),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)
   dev.off()
