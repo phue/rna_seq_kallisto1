@@ -130,7 +130,7 @@ dev.off()
 ### analysis + MA plots
 co = read.table(args[3],header=T,sep=",")
 runs=list()
-for ( i in 9:nrow(co)){
+for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
   runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
