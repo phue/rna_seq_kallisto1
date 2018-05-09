@@ -409,10 +409,10 @@ publishDir "$params.output/deseq", mode: 'copy'
   	file 'pairs.png' into pair
   	file 'dds.Rdata' into dds
   	file 'pca.png' into pca
-  	file 'maplot_*' into maplots
+  	file 'maplot*' into maplots
   	file 'contrast_*' into results
   	file 'sessionInfo_deseq2.txt' into seinfo
-  	file 'barplot_*' into barplots
+  	file 'barplot*' into barplots
 	file 'Rarguments.txt' into argument
 
  	script:
