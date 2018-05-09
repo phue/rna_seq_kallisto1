@@ -11,6 +11,7 @@ params.bootstrap     	= '100'
 params.seqtype 		= 'SR' // 'PR'
 params.strand 		= 'rf-stranded'//  fr-stranded,  NULL
 params.output        	= "results/"
+params.bam_out		= "result_bams"
 params.info 		= 'info.tab' // name, type, condition  
 params.anno_set 	= "tair10"// "araport_genes" // "tair10" // "tair10_TE" 
 params.contrast         = "contrasts.tab"  
@@ -316,6 +317,7 @@ process STARindex {
 
 process STAR {
 	tag "star: $name"
+	publishDir "$params.bam_out", mode: 'copy', pattern: 'star_*/*Aligned.sortedByCoord.out.bam'
 
    	input:
     	file index from star_index
