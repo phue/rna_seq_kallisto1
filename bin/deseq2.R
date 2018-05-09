@@ -142,9 +142,11 @@ for ( i in 1:nrow(co)){
   mybarplot(runs[[i]],p=pval)
   dev.off()
   com = paste("#",sessID)
+  tab=runs[[i]]
+  tab=cbind("GeneId"=rownames(tab),tab)
   file=paste(paste("contrast",paste(cont,collapse="__"),sep="_"),"csv",sep=".")   
   write.table(com, file = file,sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
-  write.table(runs[[i]],file = file, append=T,sep=",",quote=FALSE)   
+  write.table(tab, file = file, append=T, sep="," , quote=FALSE,row.names=FALSE)
 }
 
 writeLines(capture.output(sessionInfo()), "sessionInfo_deseq2.txt")
