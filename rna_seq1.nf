@@ -5,7 +5,7 @@
 **************/
 
 params.type   =   "bam" // "fastq"
-params.files  =   "../bams/*.bam" // "../fastq/*_{1,2}.fastq" 
+params.files  =   "../bams/*.bam" // "../fastqs/*_{1,2}.fastq" 
 params.fragment_len      = '180'
 params.fragment_sd      = '20'
 params.bootstrap         = '100'
