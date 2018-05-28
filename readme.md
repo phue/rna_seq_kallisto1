@@ -220,7 +220,7 @@ As most users do not need the aligned bam files and since they are usually quite
 
 The pipeline can also take fastq files as input. The easiest way to get this to work is described below:
 
-Follow the instructions in [Recommended project setup](#recommended-project-setup). But instead of creating a "bams" folder create a "fastqs" folder. In this folder you put all fastq files you want include in the analysis. The fastq files should be have names ending with _1.fastq if you have single read data. If you have paired end data you should have one _1.fastq and one _2.fastq file for each sample.
+Follow the instructions in [Recommended project setup](#recommended-project-setup). But instead of creating a "bams" folder create a "fastqs" folder. In this folder you put all fastq files you want include in the analysis. The fastq files should have names ending with _1.fastq if you have single read data. If you have paired end data you should have one _1.fastq and one _2.fastq file for each sample.
 
 In the rna_seq1.nf file you then have to change the parameter **params.type** from "bam" to "fastq". All other steps are the same as when using bam files.
 
