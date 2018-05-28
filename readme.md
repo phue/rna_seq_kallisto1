@@ -200,7 +200,7 @@ nextflow run -h</br>
 
 Then all available options and commands will be listed in your terminal.
 
-For more information about Nextflow see https://www.nextflow.io/ and read the paper: P. Di Tommaso, et al. *Nextflow enables reproducible computational workflows.* Nature Biotechnology 35, 316–319 (2017) [doi:10.1038/nbt.3820](https://www.nature.com/articles/nbt.3820)
+For more information about Nextflow see <https://www.nextflow.io/> and read the paper: P. Di Tommaso, et al. *Nextflow enables reproducible computational workflows.* Nature Biotechnology 35, 316–319 (2017) [doi:10.1038/nbt.3820](https://www.nature.com/articles/nbt.3820)
 
 
 ### Output
