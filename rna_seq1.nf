@@ -275,7 +275,7 @@ kallisto quant -i ${index} -o kallisto_${name} -b ${params.bootstrap} ${fq}
 else {
 """
 mkdir kallisto_${name}
-kallisto quant -i ${index} -o kallisto_${name} -b --${params.strand} ${params.bootstrap} ${fq}
+kallisto quant -i ${index} -o kallisto_${name} -b ${params.bootstrap} --${params.strand}  ${fq}
 """
 }
 }
