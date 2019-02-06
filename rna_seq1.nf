@@ -244,6 +244,7 @@ kallisto index -i ${params.kallistoDir} ${fasta}
 
 process quantKallisto {
 tag "fq: $name "
+publishDir "$params.output/kallisto_output" , mode: 'copy'
 
 input:
 file index from transcriptome_index
