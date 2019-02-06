@@ -59,7 +59,7 @@ add_norm_counts=function(dds,contrast,res){
   new
 }
 clean_up_df=function(res){
-  remove=c("baseMean","lfcSE","stat","pvalue")
+  remove=c("baseMean","lfcSE","stat")
   new = res[,!colnames(res)%in%remove]
   new
 }
