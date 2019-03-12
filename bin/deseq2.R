@@ -47,9 +47,9 @@ myplotMA=function(dds,contrast,p){
 }
 add_norm_counts=function(dds,contrast,res){
   n_counts=counts(dds,normalized=T)
-  g = grep(contrast[1],colnames(colData(dds)))
-  g1 = grep(contrast[2],colData(dds)[,g])
-  g2 = grep(contrast[3],colData(dds)[,g])
+  g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
+  g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+  g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
   mean1 = rowMeans(n_counts[,g1])
   mean2 = rowMeans(n_counts[,g2])
   numb = cbind(mean1,mean2,n_counts[,g1],n_counts[,g2])
