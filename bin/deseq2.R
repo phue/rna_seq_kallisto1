@@ -54,10 +54,25 @@ add_norm_counts=function(dds,contrast,res){
   mean2 = rowMeans(n_counts[,g2])
   numb = cbind(mean1,mean2,n_counts[,g1],n_counts[,g2])
   colnames(numb)[1:2]=paste0("mean",contrast[2:3])
+  colnames(numb) = paste("norm.counts",  colnames(numb),sep="_")
   res=as.data.frame(res)
   new=cbind(res,numb[rownames(res),])
   new
 }
+add_mean_tpm=function( dds, tpm, contrast, res){
+    g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
+    g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+    n1 = rownames(colData(dds))[g1]
+    g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
+    n2 = rownames(colData(dds))[g2]
+    mean1 = rowMeans(tpm[,n1])
+    mean2 = rowMeans(tpm[,n2])
+    numb = cbind(mean1,mean2, tpm[,n1],tpm[,n2])
+    colnames(numb)[1:2]=paste0("mean",contrast[2:3])
+    colnames(numb) = paste("tpm", colnames(numb),sep="_")
+    numb
+}
+
 clean_up_df=function(res){
   remove=c("baseMean","lfcSE","stat")
   new = res[,!colnames(res)%in%remove]
@@ -97,14 +112,20 @@ df = select(txdb, keys=keys,columns=c("TXCHROM", "TXSTART", "TXEND","TXNAME","TX
 tx2gene=df[,2:1]
 
 txi <- tximport(s2c$file, type = "kallisto", tx2gene = tx2gene)
-counts=txi$counts
-colnames(counts)=s2c$sample
-countsToUse = round(counts)
 
+counts=txi$counts
+tpm = txi$abundance
+colnames(counts)=s2c$sample
+colnames(tpm) = s2c$sample
+countsToUse = round(counts)
 
 pval <- as.numeric(args[4])
 
 sessID <-args[6]
+
+
+## tpms 
+
 
 ##################################################
 ### deseq2 - first part 
@@ -133,7 +154,9 @@ runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
   runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
+  tpm = add_mean_tpm(dds, tpm, cont,runs[[i]])
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
+  runs[[i]] =cbind(runs[[i]],tpm[rownames(runs[[i]]),])
   runs[[i]]=clean_up_df(runs[[i]])
   png(paste(paste("maplot",paste(cont,collapse="__"),sep=""),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)
