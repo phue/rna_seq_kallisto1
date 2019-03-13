@@ -61,10 +61,15 @@ add_norm_counts=function(dds,contrast,res){
 }
 add_mean_tpm=function( dds, tpm, contrast, res){
     g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
+    print(g)
     g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+    print(g1)
     n1 = rownames(colData(dds))[g1]
+    print(n1)
     g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
+    print(g2)
     n2 = rownames(colData(dds))[g2]
+    print(n2)
     mean1 = rowMeans(tpm[,n1])
     mean2 = rowMeans(tpm[,n2])
     numb = cbind(mean1,mean2, tpm[,n1],tpm[,n2])
