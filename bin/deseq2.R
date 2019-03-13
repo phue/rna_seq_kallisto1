@@ -59,7 +59,7 @@ add_norm_counts=function(dds,contrast,res){
   new=cbind(res,numb[rownames(res),])
   new
 }
-add_mean_tpm=function( dds, tpm, contrast, res){
+add_mean_tpm=function( dds, tpm, contrast){
     g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
     g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
     n1 = rownames(colData(dds))[g1]
@@ -154,9 +154,9 @@ runs=list()
 for ( i in 1:nrow(co)){
   cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
   runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
-  tpm = add_mean_tpm(dds, tpm, cont,runs[[i]])
+  tpm_df = add_mean_tpm(dds, tpm, cont)
   runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
-  runs[[i]] =cbind(runs[[i]],tpm[rownames(runs[[i]]),])
+  runs[[i]] =cbind(runs[[i]],tpm_df[rownames(runs[[i]]),])
   runs[[i]]=clean_up_df(runs[[i]])
   png(paste(paste("maplot",paste(cont,collapse="__"),sep=""),"png",sep=".")) 
   myplotMA(dds,cont,p=pval)

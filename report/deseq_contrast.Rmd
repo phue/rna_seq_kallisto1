@@ -26,7 +26,7 @@ a = read.table(paste0("./lists/",csv),sep=",",header=T)
 ```
 
 ```{r, echo=FALSE}
-a = a[1:10,1:6]
+a = a[1:10,1:7]
 kable(a,caption="Top 10 DE genes" )
 ```
 
