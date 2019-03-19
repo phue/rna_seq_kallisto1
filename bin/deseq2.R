@@ -121,7 +121,8 @@ countsToUse = round(counts)
 
 pval <- as.numeric(args[4])
 
-sessID <-args[6]
+n_filter <-as.numeric(args[6])
+sessID <-args[7]
 
 
 ## tpms 
@@ -132,6 +133,12 @@ sessID <-args[6]
 
 colD=data.frame(group=s2c$condition,name=s2c$name)
 dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
+if(n_filter>0){
+   n_counts = counts(dds)
+  n_counts = subset(n_counts, apply(n_counts,1,max)>=n_filter)
+  dds = DESeqDataSetFromMatrix(n_counts,colData=colD,design=~group)
+}
+
 dds=DESeq(dds)
 save(dds,file="dds.Rdata")
 

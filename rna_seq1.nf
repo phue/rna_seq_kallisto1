@@ -4,8 +4,8 @@
 * Parameters
 **************/
 
-params.type   =   "bam" // "fastq"
-params.files  =   "../bams/*.bam" // "../fastqs/*_{1,2}.fastq"
+params.type   =   "fastq"
+params.files  =   "../fastq/*_{1,2}.fastq"
 params.fragment_len      = '180'
 params.fragment_sd      = '20'
 params.bootstrap         = '100'
@@ -17,6 +17,7 @@ params.info         = 'info.tab' // name, type, condition
 params.anno_set     = "tair10"// "araport_genes" // "tair10" // "tair10_TE"
 params.contrast         = "contrasts.tab"
 params.pvalue        = 0.1
+params.filter   = 0 // no filter
 params.binsize        = 10
 
 
@@ -53,6 +54,8 @@ params.normtosize = '119146348'
 params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
 
+
+
 report = file("report/deseq2.Rmd")
 
 log.info "RNA-SEQ N F  ~  version 0.1"
@@ -68,6 +71,7 @@ log.info "sample info         : ${params.info}"
 log.info "annotations        : ${params.anno_set}"
 log.info "contrasts        : ${params.contrast}"
 log.info "p-value         : ${params.pvalue}"
+log.info "counts filter   :${params.filter}"
 log.info "norm. size        : ${params.normtosize}"
 log.info "binsize        : ${params.binsize}"
 log.info "txdb             : ${params.txdb}"
@@ -92,6 +96,7 @@ file1 <<  "sample info           : ${params.info} \n"
 file1 <<  "annotations           : ${params.anno_set} \n"
 file1 <<  "contrasts             : ${params.contrast} \n"
 file1 <<  "p-value               : ${params.pvalue} \n"
+file1 <<  "counts filter   :${params.filter} \n"
 file1 <<  "norm. size            : ${params.normtosize} \n"
 file1 <<  "binsize               : ${params.binsize} \n"
 file1 <<  "txdb                  : ${params.txdb} \n"
@@ -430,7 +435,7 @@ file 'Rarguments.txt' into argument
 
 script:
 """
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} $workflow.sessionId
+singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
 """
 }
 
