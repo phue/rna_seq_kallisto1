@@ -14,7 +14,7 @@ params.strand         = 'rf-stranded'//  "fr-stranded"  NULL
 params.output            = "results/"
 params.bam_out        = "result_bams"
 params.info         = 'info.tab' // name, type, condition
-params.anno_set     = "tair10"// "araport_genes" // "tair10" // "tair10_TE"
+params.anno_set     =  "tair10_genes_TE"  //"tair10"// "araport_genes" // "tair10" // "tair10_TE"
 params.contrast         = "contrasts.tab"
 params.pvalue        = 0.1
 params.filter   = 0 // no filter
@@ -53,6 +53,17 @@ params.kallistoDir = "araport_genes.idx"
 params.normtosize = '119146348'
 params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
 }
+
+if(params.anno_set == "tair10_genes_TE"){
+params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/TAIR10.cdna.all.with.TEfamilies.gtf")
+params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/TAIR10.cdna.all.with.TEfamilies.fa")
+params.starDir = "star_tair10_TE"
+params.kallistoDir = "tair10_TE_genes.idx"
+params.normtosize = '119146348'
+params.txdb= file("/lustre/scratch/projects/berger_common/backup_berger_common/tair10_gene_TE.txdb")
+}
+
 
 
 
