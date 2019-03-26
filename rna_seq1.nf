@@ -5,17 +5,17 @@
 **************/
 
 params.type   =   "bam"
-params.files  =    "../bams/*.bam"  //"../fastq/*_{1,2}.fastq"
+params.files  =    "../../mike_bug/bams/*.bam"  //"../fastq/*_{1,2}.fastq"
 params.fragment_len      = '180'
 params.fragment_sd      = '20'
 params.bootstrap         = '100'
 params.seqtype         = 'SR' // 'PR'
-params.strand         = null //'rf-stranded'//  "fr-stranded"  NULL
+params.strand         = 'rf-stranded'//  "fr-stranded"  NULL
 params.output            = "results/"
 params.bam_out        = "result_bams"
-params.info         = 'infobam.tab' // name, type, condition 
+params.info         = 'info.tab' // name, type, condition 
 params.anno_set     =  "tair10"  //"tair10"// "araport_genes" // "tair10" // "tair10_TE"
-params.contrast  = 'NO_FILE' //"contrasts.tab" // SET to NULL to skip DE analyisis
+params.contrast  =  "contrasts.tab" //'NO_FILE' //"contrasts.tab" // SET to NULL to skip DE analyisis
 params.pvalue        = 0.1
 params.filter   = 0 // no filter
 params.binsize        = 10
@@ -449,7 +449,7 @@ file 'table.tab' optional true into table
 
 
 script:
-def contrast_file = cont.name != 'NO_FILE' ? "$opt" : 'NULL'
+def contrast_file = cont.name != 'NO_FILE' ? "$cont" : 'NULL'
 """ 
 singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrast_file} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
 """

@@ -80,7 +80,7 @@ add_mean_tpm=function( dds, tpm, contrast){
     means = list()
     tpms = list()
     for(i in 2:length(contrast)){
-        cond_columns = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+        cond_columns = grep(paste0("^",contrast[i],"$"),colData(dds)[,g])
         cond_names = rownames(colData(dds))[cond_columns]
         tpms[[i-1]] = tpm[,cond_names]
         means[[i-1]] = rowMeans(tpms[[i-1]])
@@ -210,16 +210,16 @@ if(contrast_file!='NULL'){ # NULL means no contrasts should be analyized
         runs[[i]]=add_norm_counts(dds,my_contrast,runs[[i]])
         runs[[i]] =cbind(runs[[i]],tpm_df[rownames(runs[[i]]),])
         runs[[i]]=clean_up_df(runs[[i]])
-        png(paste(paste("maplot",paste(cont,collapse="__"),sep=""),"png",sep="."))
+        png(paste(paste("maplot",paste(my_contrast,collapse="__"),sep=""),"png",sep="."))
         myplotMA(dds,my_contrast,p=pval)
         dev.off()
-        png(paste(paste("barplot",paste(cont,collapse="__"),sep=""),"png",sep="."))
+        png(paste(paste("barplot",paste(my_contrast,collapse="__"),sep=""),"png",sep="."))
         mybarplot(runs[[i]],p=pval)
         dev.off()
         com = paste("#",sessID)
         tab=runs[[i]]
         tab=cbind("GeneId"=rownames(tab),tab)
-        file=paste(paste("contrast",paste(cont,collapse="__"),sep="_"),"csv",sep=".")
+        file=paste(paste("contrast",paste(my_contrast,collapse="__"),sep="_"),"csv",sep=".")
         write.table(com, file = file,sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
         write.table(tab, file = file, append=T, sep="," , quote=FALSE,row.names=FALSE)
     }
