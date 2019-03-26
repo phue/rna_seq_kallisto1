@@ -6,7 +6,6 @@ params:
   design: "test"
   stat: "star_stats.tab"
   p: "0.1"
-  contrast_file: "contrast.tab"
   sessionId: "name"
 ---
 
@@ -17,7 +16,6 @@ library(ggplot2)
 library(reshape2)
 library(readr)
 library(tximport)
-contrast_file = params$contrast_file ## maybe remove as parameter
 s2c_file <- params$design
 s2c <- read.table(s2c_file, header = TRUE, stringsAsFactors=FALSE,sep=",",colClasses=c("character","character","character"))
 ```

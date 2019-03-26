@@ -4,18 +4,18 @@
 * Parameters
 **************/
 
-params.type   =   "fastq"
-params.files  =   "../fastq/*_{1,2}.fastq"
+params.type   =   "bam"
+params.files  =    "../bams/*.bam"  //"../fastq/*_{1,2}.fastq"
 params.fragment_len      = '180'
 params.fragment_sd      = '20'
 params.bootstrap         = '100'
 params.seqtype         = 'SR' // 'PR'
-params.strand         = 'rf-stranded'//  "fr-stranded"  NULL
+params.strand         = null //'rf-stranded'//  "fr-stranded"  NULL
 params.output            = "results/"
 params.bam_out        = "result_bams"
-params.info         = 'info.tab' // name, type, condition
-params.anno_set     =  "tair10_genes_TE"  //"tair10"// "araport_genes" // "tair10" // "tair10_TE"
-params.contrast         = "contrasts.tab"
+params.info         = 'infobam.tab' // name, type, condition 
+params.anno_set     =  "tair10"  //"tair10"// "araport_genes" // "tair10" // "tair10_TE"
+params.contrast  = 'NO_FILE' //"contrasts.tab" // SET to NULL to skip DE analyisis
 params.pvalue        = 0.1
 params.filter   = 0 // no filter
 params.binsize        = 10
@@ -139,8 +139,8 @@ gtf = file(params.gtf)
 */
 
 if( !design.exists() ) exit 1, "Missing sample info file: ${design}"
-if( !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
-// contrasts
+//if( do_deseq && !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
+// contrasts must exist to do deseq
 
 /***********************
 * Channel for bam/fastq files
@@ -426,33 +426,40 @@ bamCoverage -b ${bam} -o ${name}.bw --normalizeTo1x ${params.normtosize} --binSi
 * DESeq2
 *****************************/
 
+// skip this step if no contrast was used
+
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
 input:
 file 'kallisto/*' from kallisto_dirs_deseq2.collect()
 file design
-file contrasts
+file cont from contrasts
 
 output:
 file 'pairs.png' into pair
 file 'dds.Rdata' into dds
 file 'pca.png' into pca
-file 'maplot*' into maplots
-file 'contrast_*' into results
+file 'maplot*' optional true into maplots
+file 'contrast_*' optional true into results
 file 'sessionInfo_deseq2.txt' into seinfo
-file 'barplot*' into barplots
+file 'barplot*' optional true into barplots
 file 'Rarguments.txt' into argument
+file 'table.tab' optional true into table
+
 
 script:
-"""
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrasts} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
+def contrast_file = cont.name != 'NO_FILE' ? "$opt" : 'NULL'
+""" 
+singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrast_file} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
 """
 }
 
 /*******************************
 *report {
 *******************************/
+
+// if no contrast was used then no input from DESeq2 
 
 process report {
 publishDir "$params.output/report", mode: 'copy'
@@ -468,6 +475,8 @@ file session from seinfo
 file mypar
 file 'barplots/*' from barplots.collect()
 file args from argument
+when:
+do_deseq
 
 output:
 file 'report.html'
@@ -478,7 +487,7 @@ script:
 """
 cp -L $baseDir/report/deseq_contrast.Rmd .
 cp -L $baseDir/report/report.Rmd .
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue}  ${contrasts} $workflow.sessionId
+singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue}  $workflow.sessionId
 """
 }
 

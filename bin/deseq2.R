@@ -10,6 +10,8 @@ library(TxDb.Athaliana.BioMart.plantsmart28)
 ###############################################
 ## functions
 
+
+# function that adds correlation to pairs plot. Used with or without contrast file!
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
     usr <- par("usr"); on.exit(par(usr))
@@ -21,6 +23,7 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
     text(0.5, 0.5, txt, cex = cex.cor * r)
 }
 
+# function that runs DE analysis for one contrast (mle and map log2, p-value, padj...) # only when contrast file is provided
 run_DESeq=function(dds,contrast,cutoff)
 {
     res2 = results(dds,contrast = contrast)##MLE
@@ -32,6 +35,7 @@ run_DESeq=function(dds,contrast,cutoff)
     return(res_df)
 }
 
+# function to plot barplot with nr significant genes. # only when contrast file is provided
 mybarplot = function(run, p){
     sigs = dplyr::filter(as.data.frame(run),padj<p)
     counts = dplyr::transmute(sigs, log_0 = sign(log2FoldChange) ,log_1=ifelse(abs(log2FoldChange)>1,1,0)*sign(log2FoldChange) , log_2= ifelse(abs(log2FoldChange)>2,1,0)*sign(log2FoldChange))
@@ -41,36 +45,62 @@ mybarplot = function(run, p){
 }
 
 
+# function to plot maplot. # only when contrast file is provided
 myplotMA=function(dds,contrast,p){
   res = lfcShrink(dds,contrast = contrast)
   plotMA(res,main=contrast,ylim=c(-2,2),alpha=p)
 }
+
+# function to add normalized counts and mean to table. Use with or without contrast
 add_norm_counts=function(dds,contrast,res){
-  n_counts=counts(dds,normalized=T)
-  g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
-  g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
-  g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
-  mean1 = rowMeans(n_counts[,g1])
-  mean2 = rowMeans(n_counts[,g2])
-  numb = cbind(mean1,mean2,n_counts[,g1],n_counts[,g2])
-  colnames(numb)[1:2]=paste0("mean",contrast[2:3])
-  colnames(numb) = paste("norm.counts",  colnames(numb),sep="_")
-  res=as.data.frame(res)
-  new=cbind(res,numb[rownames(res),])
-  new
+    n_counts=counts(dds,normalized=T)
+    g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds))) # column with group
+    means = list()
+    counts = list()
+    for(i in 2:length(contrast)){
+        cond_columns = grep(paste0("^",contrast[i],"$"),colData(dds)[,g])
+        counts[[i-1]] = n_counts[,cond_columns]
+        means[[i-1]] = rowMeans(counts[[i-1]])
+  }
+  a_mean = do.call("cbind",means)
+  colnames(a_mean) = paste0("mean",unique(contrast[2:length(contrast)]))
+  a_counts = do.call("cbind",counts)
+  tot = cbind(a_mean, a_counts)
+  colnames(tot) =paste("norm.counts",  colnames(tot),sep="_")
+  if(res!=FALSE){
+      res=as.data.frame(res)
+      tot=cbind(res,tot[rownames(res),])
+  }
+  tot
 }
+
+# function to add tpm and mean to table. Re-write using groups..?
 add_mean_tpm=function( dds, tpm, contrast){
-    g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds)))
-    g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
-    n1 = rownames(colData(dds))[g1]
-    g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
-    n2 = rownames(colData(dds))[g2]
-    mean1 = rowMeans(tpm[,n1])
-    mean2 = rowMeans(tpm[,n2])
-    numb = cbind(mean1,mean2, tpm[,n1],tpm[,n2])
-    colnames(numb)[1:2]=paste0("mean",contrast[2:3])
-    colnames(numb) = paste("tpm", colnames(numb),sep="_")
-    numb
+    g = grep(paste0("^",contrast[1],"$"),colnames(colData(dds))) # column with group
+    means = list()
+    tpms = list()
+    for(i in 2:length(contrast)){
+        cond_columns = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+        cond_names = rownames(colData(dds))[cond_columns]
+        tpms[[i-1]] = tpm[,cond_names]
+        means[[i-1]] = rowMeans(tpms[[i-1]])
+    }
+    a_mean = do.call("cbind",means)
+    colnames(a_mean) = paste0("mean",unique(contrast[2:length(contrast)]))
+    a_tpm = do.call("cbind",tpms)
+    tot = cbind(a_mean, a_tpm)
+    colnames(tot) =paste("tpm",  colnames(tot),sep="_")
+    tot
+    #g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
+    #n1 = rownames(colData(dds))[g1]
+    #g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
+    #n2 = rownames(colData(dds))[g2]
+    #mean1 = rowMeans(tpm[,n1])
+    #mean2 = rowMeans(tpm[,n2])
+    #numb = cbind(mean1,mean2, tpm[,n1],tpm[,n2])
+    #colnames(numb)[1:2]=paste0("mean",contrast[2:3])
+    #colnames(numb) = paste("tpm", colnames(numb),sep="_")
+    #numb
 }
 
 clean_up_df=function(res){
@@ -86,10 +116,19 @@ clean_up_df=function(res){
 ### set up 
 
 args <- commandArgs(TRUE)
-sample_id <- dir(args[1])
-kal_dirs <- sapply(sample_id, function(id) file.path(args[1], id))
+## explicitly setting the arguments to make it easier to read/edit/debug
+dirname <- args[1]
+design_file <- args[2]
+contrast_file <- args[3]
+pval <- as.numeric(args[4])
+txdb_choice <- args[5]
+n_filter <-as.numeric(args[6])
+sessID <-args[7]
 
-s2c <- read.table(args[2], header = TRUE, stringsAsFactors=FALSE,sep=",",colClasses=c("character","character","character"))
+sample_id <- dir(dirname)
+kal_dirs <- sapply(sample_id, function(id) file.path(dirname, id))
+
+s2c <- read.table(design_file, header = TRUE, stringsAsFactors=FALSE,sep=",",colClasses=c("character","character","character"))
 mn_condition = make.names(s2c$condition)
 if (length(unique(mn_condition))!=length(unique(s2c$condition)))
 	stop("Condition names contain characters that can not be resolved,please use only numbers, letteers, dot and underscore")
@@ -101,11 +140,11 @@ s2c <- dplyr::mutate(s2c, file = paste0(kal_dirs,"/abundance.h5"))
 s2c <- s2c[order(s2c$condition), ]
 
 
-txdb_choice = args[5]
+
 if(txdb_choice == "tair10"){
 	txdb = TxDb.Athaliana.BioMart.plantsmart28
 } else { 
-txdb = loadDb(args[5])
+txdb = loadDb(txdb_choice)
 }
 keys <- keys(txdb)
 df = select(txdb, keys=keys,columns=c("TXCHROM", "TXSTART", "TXEND","TXNAME","TXSTRAND"), keytype="GENEID")
@@ -119,24 +158,28 @@ colnames(counts)=s2c$sample
 colnames(tpm) = s2c$sample
 countsToUse = round(counts)
 
-pval <- as.numeric(args[4])
 
-n_filter <-as.numeric(args[6])
-sessID <-args[7]
+
 
 
 ## tpms 
 
 
 ##################################################
-### deseq2 - first part 
+### deseq2 - first part, run always
 
 colD=data.frame(group=s2c$condition,name=s2c$name)
+if (length(unique(colD$group))==1){
+        dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~1)
+} else {
 dds = DESeqDataSetFromMatrix(countsToUse,colData=colD,design=~group)
-if(n_filter>0){
-   n_counts = counts(dds)
-  n_counts = subset(n_counts, apply(n_counts,1,max)>=n_filter)
-  dds = DESeqDataSetFromMatrix(n_counts,colData=colD,design=~group)
+}
+
+## in case want to filter out genes with few reads
+if(n_filter>0){ # does not make sense to do if no contrast! (hence design=~group)
+    n_counts = counts(dds)
+    n_counts = subset(n_counts, apply(n_counts,1,max)>=n_filter)
+    dds = DESeqDataSetFromMatrix(n_counts,colData=colD,design=~group)
 }
 
 dds=DESeq(dds)
@@ -155,29 +198,42 @@ plotPCA(rld, intgroup=c("name"))
 dev.off()
 
 
+### second part, only if contrast file
 ### analysis + MA plots
-co = read.table(args[3],header=T,sep=",")
-runs=list()
-for ( i in 1:nrow(co)){
-  cont=c("group",colnames(co)[c(which(co[i,]==1),which(co[i,]==-1))])
-  runs[[i]]=run_DESeq(dds,contrast=cont,cutoff=pval) 
-  tpm_df = add_mean_tpm(dds, tpm, cont)
-  runs[[i]]=add_norm_counts(dds,cont,runs[[i]])
-  runs[[i]] =cbind(runs[[i]],tpm_df[rownames(runs[[i]]),])
-  runs[[i]]=clean_up_df(runs[[i]])
-  png(paste(paste("maplot",paste(cont,collapse="__"),sep=""),"png",sep=".")) 
-  myplotMA(dds,cont,p=pval)
-  dev.off()
-  png(paste(paste("barplot",paste(cont,collapse="__"),sep=""),"png",sep="."))
-  mybarplot(runs[[i]],p=pval)
-  dev.off()
-  com = paste("#",sessID)
-  tab=runs[[i]]
-  tab=cbind("GeneId"=rownames(tab),tab)
-  file=paste(paste("contrast",paste(cont,collapse="__"),sep="_"),"csv",sep=".")   
-  write.table(com, file = file,sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
-  write.table(tab, file = file, append=T, sep="," , quote=FALSE,row.names=FALSE)
+if(contrast_file!='NULL'){ # NULL means no contrasts should be analyized
+    contrast_to_run = read.table(contrast_file,header=T,sep=",")
+    runs=list()
+    for ( i in 1:nrow(contrast_to_run)){
+        my_contrast=c("group",colnames(contrast_to_run)[c(which(contrast_to_run[i,]==1),which(contrast_to_run[i,]==-1))])
+        runs[[i]]=run_DESeq(dds,contrast=my_contrast,cutoff=pval)
+        tpm_df = add_mean_tpm(dds, tpm, my_contrast)
+        runs[[i]]=add_norm_counts(dds,my_contrast,runs[[i]])
+        runs[[i]] =cbind(runs[[i]],tpm_df[rownames(runs[[i]]),])
+        runs[[i]]=clean_up_df(runs[[i]])
+        png(paste(paste("maplot",paste(cont,collapse="__"),sep=""),"png",sep="."))
+        myplotMA(dds,my_contrast,p=pval)
+        dev.off()
+        png(paste(paste("barplot",paste(cont,collapse="__"),sep=""),"png",sep="."))
+        mybarplot(runs[[i]],p=pval)
+        dev.off()
+        com = paste("#",sessID)
+        tab=runs[[i]]
+        tab=cbind("GeneId"=rownames(tab),tab)
+        file=paste(paste("contrast",paste(cont,collapse="__"),sep="_"),"csv",sep=".")
+        write.table(com, file = file,sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
+        write.table(tab, file = file, append=T, sep="," , quote=FALSE,row.names=FALSE)
+    }
+} else {
+    my_contrast = c("group",as.character(unique(colD$group)))
+    com = paste("#",sessID)
+    tpm_df = add_mean_tpm(dds, tpm, my_contrast)
+    runs=add_norm_counts(dds,my_contrast,FALSE)
+    runs = cbind(runs,tpm_df[rownames(runs),])
+    runs=cbind("GeneId"=rownames(runs),runs)
+    write.table(com, file = "table.tab",sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
+    write.table(runs,file="table.tab",append=T,sep=",",quote = FALSE,row.names=FALSE)
 }
+
 
 writeLines(capture.output(sessionInfo()), "sessionInfo_deseq2.txt")
 writeLines(print(args),"Rarguments.txt")
