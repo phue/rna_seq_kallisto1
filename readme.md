@@ -24,6 +24,8 @@ The **one and only** thing you'll need is a Mendel account. If you do not have o
 ### Data requirements
 You need to have bam files of your sequencing runs (unaligned, demultiplexed). If you have sequenced at the vbcf, then your data should be available in the group folder under /lab/Raw/demultiplexed/. If you can't find your data or have any other problem, then just contact me (Elin).
 
+*It is also possible to use fastq files if you for example have data from GEO*
+
 ## Get pipeline 
 
 ### Using git (recommended)
@@ -38,6 +40,8 @@ Using git comes with a lot of benefits, espacially if you want to make any chang
 If you don't have access to the GMI github and have no interest in getting this set up for you, there is an alternative way. A copy of the repository is located at /lustre/scratch/projects/berger_common/pipelines/. You can copy this folder to your current folder by typing (**NB the dot at the end of the line**):
 
 cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 .
+
+**NOTE: This is a VERY inferier way compared to git, please try to avoid it!**
 
 ## Recommended project setup
 In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#data-requirements)) into this folder. **NB the bams folder should only contain the bam files you want to include in the analysis!!**. Next get the pipeline code (see section [Get pipeline](#get-pipeline)). Now you will have two subfolders, the bams folder that you created and a new folder called rna_seq_kallisto1.
@@ -78,7 +82,7 @@ to list them. The ones you need to care about are: *info.tab*, *contrasts.tab* a
 The text files you need to edit are the following:
 
 * info.tab : information about the samples
-* contrasts.tab : defining the contrasts you want to test
+* contrasts.tab : defining the contrasts you want to test (can be skipped if you don't want to do pair-wise experiments)
 
 ### info.tab
 
@@ -131,7 +135,15 @@ If you open the file called rna_seq1.nf in the rna_seq_kallisto1 folder you will
 
 **params.strand:** this parameter tells the pipeline what type of strand specificity your data has. This is decided by the kit used for library preparation. The most common type is "reverse first" (RF-strand), this means that the read (or the first read if paired) comes from the reverse strand. RF-strand is the default setting so **if you have "reverse first" strand specificity you do not need to change this parameter.** The other options are: fr-stand (read, or first read in paired data, comes from forward strand) and NULL for un-stranded data (e.g from SMART2)<br/>
 
-**params.anno_set:** which annotations you want to use. Options so far (more can be added on demand) are "tair10" and "araport11" and "tair10_TE" where "tair10" is the default and the "tair10_TE" was added on request by Maggie and Bhagyshree (contact them for details on what is included).
+**params.anno_set:** which annotations you want to use. Options so far (more can be added on demand) are:
+1. "tair10". Uses genes from TAIR10. Default. 
+2. "araport_genes". Uses genes from araport11. 
+3. "tair10_TE". This option was added on request by Maggie and Bhagyshree (contact them for details on what is included).
+4. "tair10_genes_TE". This  option was added on request by Ranjith (contact him for details on what is included).
+
+**params.filter:** this parameter allows you to filter away genes with few reads before you run the differential expression analysis. If the parameter is set to e.g. 10 this means that genes with less than 10 reads in all samples are removed. The default value is 0, meaning no filtering is done.
+
+**params.contrast:** If you follow the 'recommended project setup', then you **only need to change this if you want to skip the differential expression analysis step.** To skip this step set the params.contrast to 'NO_FILE'.
 
 In addition, if you have single read data, you might consider changing the following two parameters:
 
@@ -220,7 +232,7 @@ As most users do not need the aligned bam files and since they are usually quite
 
 The pipeline can also take fastq files as input. The easiest way to get this to work is described below:
 
-Follow the instructions in [Recommended project setup](#recommended-project-setup). But instead of creating a "bams" folder create a "fastqs" folder. In this folder you put all fastq files you want include in the analysis. The fastq files should have names ending with _1.fastq if you have single read data. If you have paired end data you should have one _1.fastq and one _2.fastq file for each sample.
+Follow the instructions in [Recommended project setup](#recommended-project-setup). But instead of creating a "bams" folder create a "fastqs" folder. In this folder you put all fastq files you want include in the analysis. The fastq files should have names ending with \_1.fastq if you have single read data. If you have paired end data you should have one \_1.fastq and one \_2.fastq file for each sample. The **params.file** should then be set to "../fastqs/\*\_{1,2}.fastq". **NOTE** you need the \*\_{1,2}.fastq even if you have single end data! 
 
-In the rna_seq1.nf file you then have to change the parameter **params.type** from "bam" to "fastq". All other steps are the same as when using bam files.
+In the rna_seq1.nf file you then have to change the parameter **params.type** from "bam" to "fastq".  All other steps are the same as when using bam files.
 
