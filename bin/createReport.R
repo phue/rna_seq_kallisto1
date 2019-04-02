@@ -7,9 +7,8 @@ args = commandArgs(TRUE)
 
 design_file = args[1]
 pvalue = args[2]
-contrast = args[3]
-session = args[4]
+session = args[3]
 
-rmarkdown::render("report.Rmd",params=list(design = design_file, p =pvalue,contrast_file = contrast, sessionId=session))
+rmarkdown::render("report.Rmd",params=list(design = design_file, p =pvalue, sessionId=session))
 
 

@@ -475,8 +475,6 @@ file session from seinfo
 file mypar
 file 'barplots/*' from barplots.collect()
 file args from argument
-when:
-do_deseq
 
 output:
 file 'report.html'
