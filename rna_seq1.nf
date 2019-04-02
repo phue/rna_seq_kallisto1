@@ -5,7 +5,7 @@
 **************/
 
 params.type   =   "bam"
-params.files  =    "../../mike_bug/bams/*.bam"  //"../fastq/*_{1,2}.fastq"
+params.files  =    "../bams/*.bam"  //"../fastq/*_{1,2}.fastq"
 params.fragment_len      = '180'
 params.fragment_sd      = '20'
 params.bootstrap         = '100'
@@ -15,7 +15,7 @@ params.output            = "results/"
 params.bam_out        = "result_bams"
 params.info         = 'info.tab' // name, type, condition 
 params.anno_set     =  "tair10"  //"tair10"// "araport_genes" // "tair10" // "tair10_TE"
-params.contrast  =  "contrasts.tab" //'NO_FILE' //"contrasts.tab" // SET to NULL to skip DE analyisis
+params.contrast  =  "contrasts.tab" //'NO_FILE' //  "contrasts.tab" // SET to N0_FILE to skip DE analyisis
 params.pvalue        = 0.1
 params.filter   = 0 // no filter
 params.binsize        = 10
@@ -65,13 +65,15 @@ params.txdb= file("/lustre/scratch/projects/berger_common/backup_berger_common/t
 }
 
 
+/**************************
+* pipeline info and documentation
+***************************/
 
-
-report = file("report/deseq2.Rmd")
+report = file("report/deseq2.Rmd") // not sure why I set this here
 
 log.info "RNA-SEQ N F  ~  version 0.1"
 log.info "====================================="
-log.info "bam files             : ${params.files}"
+log.info "files             : ${params.files}"  // want to add mdsums
 log.info "fragment length     : ${params.fragment_len}"
 log.info "fragment sd        : ${params.fragment_sd}"
 log.info "bootstrap        : ${params.bootstrap}"
@@ -96,7 +98,7 @@ def file1 = new File('param.txt')
 
 file1 <<  "RNA-SEQ N F  ~  version 0.1 \n"
 file1 <<  "===================================== \n"
-file1 <<  "bam files             : ${params.files} \n"
+file1 <<  "files             : ${params.files} \n"
 file1 <<  "fragment length       : ${params.fragment_len} \n"
 file1 <<  "fragment sd           : ${params.fragment_sd} \n"
 file1 <<  "bootstrap             : ${params.bootstrap} \n"
@@ -107,7 +109,7 @@ file1 <<  "sample info           : ${params.info} \n"
 file1 <<  "annotations           : ${params.anno_set} \n"
 file1 <<  "contrasts             : ${params.contrast} \n"
 file1 <<  "p-value               : ${params.pvalue} \n"
-file1 <<  "counts filter   :${params.filter} \n"
+file1 <<  "counts filter         :${params.filter} \n"
 file1 <<  "norm. size            : ${params.normtosize} \n"
 file1 <<  "binsize               : ${params.binsize} \n"
 file1 <<  "txdb                  : ${params.txdb} \n"
@@ -139,12 +141,11 @@ gtf = file(params.gtf)
 */
 
 if( !design.exists() ) exit 1, "Missing sample info file: ${design}"
-//if( do_deseq && !contrasts.exists() ) exit 1, "Missing contrast file: ${contrasts}"
-// contrasts must exist to do deseq
 
 /***********************
 * Channel for bam/fastq files
 ***********************/
+
 if(params.type=="bam"){
 files = Channel
 .fromPath(params.files)
@@ -426,8 +427,6 @@ bamCoverage -b ${bam} -o ${name}.bw --normalizeTo1x ${params.normtosize} --binSi
 * DESeq2
 *****************************/
 
-// skip this step if no contrast was used
-
 process deseq2 {
 publishDir "$params.output/deseq", mode: 'copy'
 
@@ -445,7 +444,7 @@ file 'contrast_*' optional true into results
 file 'sessionInfo_deseq2.txt' into seinfo
 file 'barplot*' optional true into barplots
 file 'Rarguments.txt' into argument
-file 'table.tab' optional true into table
+file 'table.csv' optional true into table
 
 
 script:
@@ -459,12 +458,20 @@ singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_s
 *report {
 *******************************/
 
-// if no contrast was used then no input from DESeq2 
+// if no contrast was used then not all input from DESeq2 
+
+maplots=maplots.ifEmpty('NULL')
+results=results.ifEmpty('NULL')
+barplots=barplots.ifEmpty('NULL')
+table=table.ifEmpty('NULL')
+
 
 process report {
 publishDir "$params.output/report", mode: 'copy'
 
 input:
+file table from table
+file cont from contrasts
 file stats from stats
 file mods from modules
 file pairplot from pair
@@ -476,22 +483,26 @@ file mypar
 file 'barplots/*' from barplots.collect()
 file args from argument
 
+
 output:
 file 'report.html'
 file 'deseq_contrast.Rmd'
 file 'report.Rmd'
 
 script:
+def contrast_logic = cont.name != 'NO_FILE' ? 'TRUE' : 'FALSE'
 """
 cp -L $baseDir/report/deseq_contrast.Rmd .
 cp -L $baseDir/report/report.Rmd .
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue}  $workflow.sessionId
+singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue} ${contrast_logic} $workflow.sessionId
 """
 }
 
 /********************************
 process config
 ********************************/
+
+// should run even with resume
 
 process config {
 publishDir "$params.output/nextflow", mode: 'copy'
@@ -512,6 +523,8 @@ cp  $baseDir/rna_seq1.nf .
 /********************************
 process script
 ********************************/
+
+// should run even with resume
 
 process script {
 publishDir "$params.output/used_script", mode: 'copy'

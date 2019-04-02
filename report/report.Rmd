@@ -3,6 +3,7 @@ title: "Results from rna_seq_kallisto pipeline"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 params:
+  contrast_logic: "TRUE"
   design: "test"
   stat: "star_stats.tab"
   p: "0.1"
@@ -62,15 +63,27 @@ Differential expression analysis was carried out on the counts from [Kallisto](h
 
 For each contrast defined in the contrast file, a pair-wise differential expression test is being carried out. For dispersion estimates all samples provided to the pipeline are used.
 
+If no contrast file was provided, this step is skipped.
+
 ```{r, echo=FALSE,include=FALSE, results='asis',comment=''}
 out = NULL
-for ( i in dir("maplots")){
-out = c(out, knit_child("deseq_contrast.Rmd"))
-}
+contrast_logic =  as.logical(params$contrast_logic)
+if (contrast_logic){
+  for ( i in dir("maplots")){
+    out = c(out, knit_child("deseq_contrast.Rmd"))
+  }
+} 
 ```
 
 `r paste(out, collapse='\n')`
 
+
+```{r, echo=FALSE, results='asis'}
+if (!contrast_logic){
+  cat("**Download the full [Table](../deseq/table.csv) here.**\n")
+  cat("\n")
+}
+```
 
 ## Alignment and aligment stats
 

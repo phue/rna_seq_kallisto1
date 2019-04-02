@@ -91,16 +91,6 @@ add_mean_tpm=function( dds, tpm, contrast){
     tot = cbind(a_mean, a_tpm)
     colnames(tot) =paste("tpm",  colnames(tot),sep="_")
     tot
-    #g1 = grep(paste0("^",contrast[2],"$"),colData(dds)[,g])
-    #n1 = rownames(colData(dds))[g1]
-    #g2 = grep(paste0("^",contrast[3],"$"),colData(dds)[,g])
-    #n2 = rownames(colData(dds))[g2]
-    #mean1 = rowMeans(tpm[,n1])
-    #mean2 = rowMeans(tpm[,n2])
-    #numb = cbind(mean1,mean2, tpm[,n1],tpm[,n2])
-    #colnames(numb)[1:2]=paste0("mean",contrast[2:3])
-    #colnames(numb) = paste("tpm", colnames(numb),sep="_")
-    #numb
 }
 
 clean_up_df=function(res){
@@ -230,8 +220,8 @@ if(contrast_file!='NULL'){ # NULL means no contrasts should be analyized
     runs=add_norm_counts(dds,my_contrast,FALSE)
     runs = cbind(runs,tpm_df[rownames(runs),])
     runs=cbind("GeneId"=rownames(runs),runs)
-    write.table(com, file = "table.tab",sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
-    write.table(runs,file="table.tab",append=T,sep=",",quote = FALSE,row.names=FALSE)
+    write.table(com, file = "table.csv",sep=",",quote = FALSE,row.names=FALSE,col.names=FALSE)
+    write.table(runs,file="table.csv",append=T,sep=",",quote = FALSE,row.names=FALSE)
 }
 
 
