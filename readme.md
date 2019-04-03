@@ -41,7 +41,7 @@ If you don't have access to the GMI github and have no interest in getting this 
 
 cp -r /lustre/scratch/projects/berger_common/pipelines/rna_seq_kallisto1 .
 
-**NOTE: This is a VERY inferier way compared to git, please try to avoid it!**
+**NOTE: This is a VERY inferior way compared to git, please try to avoid it!**
 
 ## Recommended project setup
 In the work directory on mendel ($WORK), create a folder called something that fits your project. Inside this folder create a subfolder called bams. Copy (using the data moving node) your bam files (see [Data requirements](#data-requirements)) into this folder. **NB the bams folder should only contain the bam files you want to include in the analysis!!**. Next get the pipeline code (see section [Get pipeline](#get-pipeline)). Now you will have two subfolders, the bams folder that you created and a new folder called rna_seq_kallisto1.
