@@ -115,8 +115,6 @@ txdb_choice <- args[5]
 n_filter <-as.numeric(args[6])
 sessID <-args[7]
 
-sample_id <- dir(dirname)
-kal_dirs <- sapply(sample_id, function(id) file.path(dirname, id))
 
 s2c <- read.table(design_file, header = TRUE, stringsAsFactors=FALSE,sep=",",colClasses=c("character","character","character"))
 mn_condition = make.names(s2c$condition)
