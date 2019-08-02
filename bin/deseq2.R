@@ -123,9 +123,9 @@ if (length(unique(mn_condition))!=length(unique(s2c$condition)))
 s2c$condition = mn_condition
 s2c <- dplyr::mutate(s2c, name = paste(condition,sample,sep="_"))
 s2c <- dplyr::select(s2c, sample = run_accession, condition, name)
-s2c <- dplyr::mutate(s2c, sample_id = paste("kallisto",sample,sep="_”))
+s2c <- dplyr::mutate(s2c, sample_id = paste("kallisto",sample,sep="_"))
 s2c <- dplyr::mutate(s2c, path = file.path(dirname, sample_id))
-s2c <- dplyr::mutate(s2c, file = paste0(path,"/abundance.h5”))
+s2c <- dplyr::mutate(s2c, file = paste0(path,"/abundance.h5"))
 s2c <- s2c[order(s2c$condition), ]
 
 
