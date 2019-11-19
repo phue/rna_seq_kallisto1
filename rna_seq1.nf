@@ -26,43 +26,43 @@ params.binsize        = 10
 ***************/
 
 if(params.anno_set == "tair10"){
-params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Arabidopsis_thaliana.TAIR10.35.gtf")
-params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa")
+params.fasta_dna = file("/scratch-cbe/shared/genomes/arabidopsis_thaliana/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+params.gtf = file("/scratch-cbe/shared/genomes/arabidopsis_thaliana/gtf/Arabidopsis_thaliana.TAIR10.39.gtf")
+params.fasta = file("/scratch-cbe/shared/genomes/arabidopsis_thaliana/fasta/Arabidopsis_thaliana.TAIR10.cdna.all.fa")
 params.starDir = "star_tair10"
 params.kallistoDir = "tair10_transcripts.idx"
 params.normtosize = '119146348'
 params.txdb="tair10"
 }
-if(params.anno_set == "tair10_TE"){
-params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/TAIR10_TE.gtf")
-params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/TAIR10_TEfamilies.fa")
-params.starDir = "star_tair10TE"
-params.kallistoDir = "tair10_TE.idx"
-params.normtosize = '119146348'
-params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/tair10_TE.txdb")
-}
+//if(params.anno_set == "tair10_TE"){
+//params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+//params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/TAIR10_TE.gtf")
+//params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/TAIR10_TEfamilies.fa")
+//params.starDir = "star_tair10TE"
+//params.kallistoDir = "tair10_TE.idx"
+//params.normtosize = '119146348'
+//params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/tair10_TE.txdb")
+//}
 
-if(params.anno_set == "araport_genes"){
-params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf")
-params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes.201606.cdna.fasta.gz")
-params.starDir = "star_araport"
-params.kallistoDir = "araport_genes.idx"
-params.normtosize = '119146348'
-params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
-}
+//if(params.anno_set == "araport_genes"){
+//params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+//params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/Araport11_GFF3_genes_transposons.201606.gtf")
+//params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Araport11_genes.201606.cdna.fasta.gz")
+//params.starDir = "star_araport"
+//params.kallistoDir = "araport_genes.idx"
+//params.normtosize = '119146348'
+//params.txdb=file("/lustre/scratch/projects/berger_common/backup_berger_common/araport11.txdb")
+//}
 
-if(params.anno_set == "tair10_genes_TE"){
-params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
-params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/TAIR10.cdna.all.with.TEfamilies.gtf")
-params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/TAIR10.cdna.all.with.TEfamilies.fa")
-params.starDir = "star_tair10_TE"
-params.kallistoDir = "tair10_TE_genes.idx"
-params.normtosize = '119146348'
-params.txdb= file("/lustre/scratch/projects/berger_common/backup_berger_common/tair10_gene_TE.txdb")
-}
+//if(params.anno_set == "tair10_genes_TE"){
+//params.fasta_dna = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa")
+//params.gtf = file("/lustre/scratch/projects/berger_common/backup_berger_common/gtf/TAIR10.cdna.all.with.TEfamilies.gtf")
+//params.fasta = file("/lustre/scratch/projects/berger_common/backup_berger_common/fasta/TAIR10.cdna.all.with.TEfamilies.fa")
+//params.starDir = "star_tair10_TE"
+//params.kallistoDir = "tair10_TE_genes.idx"
+//params.normtosize = '119146348'
+//params.txdb= file("/lustre/scratch/projects/berger_common/backup_berger_common/tair10_gene_TE.txdb")
+//}
 
 
 /**************************
@@ -241,7 +241,7 @@ fastqs.into { fastqs_kallisto; fastqs_star }
 
 process kallistoIndex {
 tag "dir: $params.kallistoDir"
-storeDir '/lustre/scratch/projects/berger_common/backup_berger_common'
+storeDir '/scratch-cbe/shared/genomes/arabidopsis_thaliana/fasta/indices'
 
 input:
 file fasta
@@ -316,7 +316,7 @@ file 'kallisto_counts.tab'
 
 script:
 """
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/sumkallisto.R kallisto ${params.txdb} ${design}
+Rscript sumkallisto.R kallisto ${params.txdb} ${design}
 """
 }
 
@@ -326,7 +326,7 @@ singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_s
 
 process STARindex {
 tag "dir: $params.starDir"
-storeDir '/lustre/scratch/projects/berger_common/backup_berger_common/'
+storeDir '/scratch-cbe/shared/genomes/arabidopsis_thaliana/fasta/indices'
 
 input:
 file gtf
@@ -396,7 +396,7 @@ file 'star_counts.tab'
 
 script:
 """
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/sumstar.R star ${params.strand} ${design}
+Rscript sumstar.R star ${params.strand} ${design}
 """
 }
 
@@ -450,7 +450,7 @@ file 'table.csv' optional true into table
 script:
 def contrast_file = cont.name != 'NO_FILE' ? "$cont" : 'NULL'
 """ 
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/deseq2.R kallisto ${design} ${contrast_file} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
+Rscript deseq2.R kallisto ${design} ${contrast_file} ${params.pvalue} ${params.txdb} ${params.filter} $workflow.sessionId
 """
 }
 
@@ -494,7 +494,7 @@ def contrast_logic = cont.name != 'NO_FILE' ? 'TRUE' : 'FALSE'
 """
 cp -L $baseDir/report/deseq_contrast.Rmd .
 cp -L $baseDir/report/report.Rmd .
-singularity exec /lustre/scratch/projects/berger_common/singularity_images/rna_seq1.simg Rscript $baseDir/bin/createReport.R ${design} ${params.pvalue} ${contrast_logic} $workflow.sessionId
+Rscript createReport.R ${design} ${params.pvalue} ${contrast_logic} $workflow.sessionId
 """
 }
 

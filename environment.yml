@@ -1,0 +1,23 @@
+name: rna_seq_kallisto1
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - conda-forge::r-tidyverse=1.2.1
+  - conda-forge::r-markdown=1.1
+  - conda-forge::r-xml=3.98_1.20
+  - conda-forge::r-curl=4.2
+  - conda-forge::r-rmysql=0.10.17
+  - conda-forge::r-knitr=1.26
+  - conda-forge::r-reshape2=1.4.3
+  - bioconda::bioconductor-rhdf5=2.30.0
+  - bioconda::bioconductor-tximport=1.14.0
+  - bioconda::bioconductor-txdb.athaliana.biomart.plantsmart28=3.2.2
+  - bioconda::bioconductor-deseq2=1.26.0
+  - bioconda::bioconductor-annotationdbi=1.48.0
+  - bioconda::bioconductor-genomeinfodb=1.22.0
+  - bioconda::bedtools=2.29.0
+  - bioconda::deeptools=3.3.1
+  - bioconda::samtools=1.9
+  - bioconda::star=2.7.3a
