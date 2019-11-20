@@ -1,0 +1,1 @@
+buildDockerImage([imageName: "rna-seq-kallisto1", pushRegistryNamespace: "becker", testCmd: null, pushBranches:["containerize"]])
